@@ -5,7 +5,11 @@ function Dim1Extra(){
 }
 
 function Dim1BaseGain(){
-    return player.st.SpaceTime1Dim.add(Dim1Extra())
+    let mul = n(1)
+	if(hasUpgrade('s', 13)){
+		mul = mul.mul(upgradeEffect('s', 13))
+	}
+    return player.st.SpaceTime1Dim.add(Dim1Extra()).mul(mul)
 }
 
 function Dim1Mul(){
@@ -44,7 +48,7 @@ addLayer("st", {
     nodeStyle: {"background": "linear-gradient(90deg, #97f1ee 0%, #fff 50%, #97f1ee 100%)"},
     update(diff){
         let gain = n(0)
-        if(hasUpgrade('s', 32) && player.points.gte(Dim1Cost())){
+        if(hasUpgrade('s', 32)){
             gain = gain.add(upgradeEffect('s', 32))
         }
         gain = gain.mul(getTimeSpeed())

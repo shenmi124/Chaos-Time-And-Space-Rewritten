@@ -39,7 +39,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01",
+	num: "0.02",
 	name: "Space!",
 }
 
@@ -86,9 +86,6 @@ function getPointGen() {
 	base = base.add(Dim1Gain())
 
 	let mul = n(1)
-	if(hasUpgrade('s', 13)){
-		mul = mul.mul(upgradeEffect('s', 13))
-	}
 	return base.mul(mul).mul(getTimeSpeed())
 }
 
@@ -112,8 +109,10 @@ var displayThings = [
 
 // You can write code here to easily display information in the top-left corner
 function displayThingsRes(){
-	return `${(geti18n()?"时间速率":"时间速率")}: `+format(getTimeSpeed())+`× | <br>
-	${(geti18n()?"时空悖论":"时空悖论")}: `+format(player.points)+` | `
+	return `${(geti18n()?"时间速率":"时间速率")}: `+format(getTimeSpeed())+`× | 
+	<br>${(geti18n()?"时空悖论":"时空悖论")}: `+format(player.points)+` |
+	<br>${(geti18n()?"空间":"空间")}: `+format(player.s.points)+` | ${(geti18n()?"扭曲空间":"扭曲空间")}: `+format(player.s.warp)+` | 
+	`
 }
 
 // Determines when the game "ends"

@@ -1,0 +1,35 @@
+.upg.s {
+    background-color: #000;
+    border-radius: 0px;
+    color: #fff;
+    border-color: #fff;
+    border: 1px solid;
+}
+
+.upg.s.locked {
+    cursor: not-allowed;
+    color: lightgrey;
+    border-color: lightgrey;
+}
+
+.upg.s.can {
+    border: 1px solid;
+    color: #000;
+}
+
+.upg.s.can:hover {
+    cursor: pointer;
+}
+
+.upg.s:not(.bought, .can) {
+    border: 1px dashed;
+}
+
+.upg.s.bought {
+    cursor: help;
+}
+
+.upg.s:hover {
+    z-index: 2;
+    transform: scale(1.15, 1.15);
+}
