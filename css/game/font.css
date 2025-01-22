@@ -1,0 +1,89 @@
+.timespeed {
+    text-align: center;
+    font-size: 24px;
+    color: #97f1ee;
+    text-shadow: 0 0 10px #97f1ee;
+}
+
+.space {
+    text-align: center;
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+}
+
+.non-color {
+    color: unset;
+}
+
+.replicanti {
+    color: #03a9f4;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 1px 1px 1px #fff;
+    font-size: 36px;
+}
+
+red { 
+    color: red;
+}
+
+redlit { 
+    color: red;
+    text-shadow: 0 0 10px red;
+}
+
+green { 
+    color: green;
+}
+
+greenlit { 
+    color: green;
+    text-shadow: 0 0 10px green;
+}
+
+blue { 
+    color: lightblue;
+}
+
+bluelit { 
+    color: lightblue;
+    text-shadow: 0 0 10px lightblue;
+}
+
+yellow { 
+    color: yellow;
+}
+
+yellowlit { 
+    color: yellow;
+    text-shadow: 0 0 10px yellow;
+}
+
+magenta { 
+    color: magenta;
+}
+
+magentalit { 
+    color: magenta;
+    text-shadow: 0 0 10px magenta;
+}
+
+cyan { 
+    color: cyan;
+}
+
+cyanlit { 
+    color: cyan;
+    text-shadow: 0 0 10px cyan;
+}
+
+grey {
+    color: #ccc;
+}
+
+darkgrey {
+    color: grey;
+}
+
+black {
+    color: black;
+}
