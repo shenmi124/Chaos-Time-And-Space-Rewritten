@@ -13,6 +13,9 @@ function Dim1MultExtra(){
     if(hasUpgrade('s', 42)){
         base = n(upgradeEffect('s', 42))
     }
+    if(player.s.green && player.s.blue){
+        base = base.add(tmp.s.getCyanEffect)
+    }
     return base
 }
 

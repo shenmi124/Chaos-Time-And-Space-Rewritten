@@ -98,9 +98,9 @@ function getIlluminationBase(){
 
 function getIllumination(){
     let ex = n(0)
-    if(player.s.green && player.s.blue){
+    /*if(player.s.green && player.s.blue){
         ex = n(tmp.s.getCyanEffect)
-    }
+    }*/
 
     let milestone = n(0)
     if(hasMilestone('s', 1)){
@@ -271,10 +271,10 @@ addLayer("s", {
         return n(getIllumination()).pow(2).max(1)
     },
     getMagentaEffect(){
-        return n(getIllumination()).pow(0.5)
+        return n(getIllumination()).pow(0.5).min(15)
     },
     getCyanEffect(){
-        return n(getIllumination()).pow(1.5)
+        return n(getIllumination()).pow(1.5).max(1)
     },
     update(diff){
         let gain = n(getWarpGen())
@@ -639,7 +639,7 @@ addLayer("s", {
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><yellowlit><big>黄光源</big></yellowlit><br>黄光源可以倍增空间数量<br>'
                     unlock += 'f(x) = x<sup>2</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getYellowEffect)
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -651,7 +651,7 @@ addLayer("s", {
 
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -661,7 +661,7 @@ addLayer("s", {
                 }
 
                 if(player.s.green && player.s.blue){
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -698,7 +698,7 @@ addLayer("s", {
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s32]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -710,7 +710,7 @@ addLayer("s", {
 
                 if(player.s.green && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -720,7 +720,7 @@ addLayer("s", {
                 }
 
                 if(player.s.green && player.s.blue){
-                    unlock += '<br><br><magentalit><big>青光源</big></magentalit><br>青光源可以给于额外的光强<br>'
+                    unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
@@ -1081,9 +1081,9 @@ addLayer("s", {
                     ["display-text", function(){return player.s.green ? '基于你的光强, <greenlit>绿光源</greenlit>为你提供了 '+format(tmp.s.getGreenEffect)+' 额外空间' : ''}],
                     ["display-text", function(){return player.s.blue ? '基于你的光强, <bluelit>蓝光源</bluelit>为你提供了 '+format(tmp.s.getBlueEffect)+' 倍时间速率' : ''}],
                     'blank',
-                    ["display-text", function(){return player.s.red && player.s.green ? '基于你的光强, <yellowlit>黄光源</yellowlit>为你提供了 '+format(tmp.s.getYellowEffect)+' 倍额外空间数量' : ''}],
+                    ["display-text", function(){return player.s.red && player.s.green ? '基于你的光强, <yellowlit>黄光源</yellowlit>为你提供了 '+format(tmp.s.getYellowEffect)+' 倍额外空间' : ''}],
                     ["display-text", function(){return player.s.red && player.s.blue ? '基于你的光强, <magentalit>紫光源</magentalit>为你提供了 [s32]提前 '+format(tmp.s.getMagentaEffect)+' 生效' : ''}],
-                    ["display-text", function(){return player.s.green && player.s.blue ? '基于你的光强, <cyanlit>青光源</cyanlit>为你提供了 '+format(tmp.s.getCyanEffect)+' 额外光强' : ''}],
+                    ["display-text", function(){return player.s.green && player.s.blue ? '基于你的光强, <cyanlit>青光源</cyanlit>为你提供了 '+format(tmp.s.getCyanEffect)+' 额外一维时空' : ''}],
                     'blank',
                     'blank',
                     ['clickable', 13],
