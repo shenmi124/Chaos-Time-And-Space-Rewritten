@@ -416,13 +416,13 @@ addLayer("s", {
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 21)},
-            tooltip(){return 'f(x) = x<br>x = 0.15'+(hasUpgrade('s', 23) ? '×(s33)' : '')+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒获得0.15一维时空*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
+            tooltip(){return 'f(x) = x<br>x = 0.2'+(hasUpgrade('s', 23) ? '×(s33)' : '')+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒获得0.15一维时空*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
             effect(){
                 let effect = n(1)
                 if(hasUpgrade('s', 33)){
                     effect = effect.mul(upgradeEffect('s', 33))
                 }
-                return effect.mul(0.15)
+                return effect.mul(0.2)
             }
         },
         33: {
