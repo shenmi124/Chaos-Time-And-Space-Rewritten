@@ -255,7 +255,7 @@ addLayer("s", {
         return n(this.getResetGain()).gte(1)
     },
     canReset(){
-        return n(this.getResetGain()).gte(1) && hasMilestone('s', 3) && !player.s.contracting
+        return n(this.getResetGain()).gte(1) && !hasMilestone('s', 3) && !player.s.contracting
     },
     row: 2,
     getRedEffect(){
