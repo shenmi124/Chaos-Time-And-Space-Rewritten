@@ -1,8 +1,10 @@
 function getUnusedSpace(){
     let cost = n(0)
     for(let i in player.s.upgrades){
-        if(hasUpgrade('s', player.s.upgrades[i])){
-            cost = cost.add(tmp.s.upgrades[player.s.upgrades[i]].cost)
+        if(tmp.s.upgrades[player.s.upgrades[i]].dimShift==undefined){
+            if(hasUpgrade('s', player.s.upgrades[i])){
+                cost = cost.add(tmp.s.upgrades[player.s.upgrades[i]].cost)
+            }
         }
     }
     return player.s.best.sub(cost)
@@ -26,12 +28,54 @@ function getSpaceAmount(){
     return player.s.points.add(ex).mul(mul).div(div)
 }
 
+function getDimShiftClass(id){
+    if(id=='reset'){
+        for(let i in tmp.s.upgrades){
+            if(tmp.s.upgrades[i].dimShift!==undefined){
+                player.s.upgradesBought.push(id)
+            }
+        }
+        return
+    }
+    if(!hasUpgrade('s', id) && hasUpgrade('s', id.slice(1)) && player.s.upgradesBought.indexOf(id)==-1){
+        player.s.upgradesBought.push(id)
+        return {'transform': 'scale(1.15, 1.15)', "animation": "spaceDimShift 5s infinite"}
+    }
+    return {"animation": "spaceDimShift 5s infinite"}
+}
+
+function getUnusedDimShift(){
+    let cost = n(0)
+    for(let i in player.s.upgrades){
+        if(tmp.s.upgrades[player.s.upgrades[i]].dimShift!==undefined){
+            if(hasUpgrade('s', player.s.upgrades[i])){
+                cost = cost.add(1)
+            }
+        }
+    }
+    return n(getDimShiftAmount()).sub(cost)
+}
+
+function getDimShiftAmount(){
+    let num = n(0)
+    if(hasMilestone('s', 5)){
+        num = num.add(tmp.s.milestones[5].effect)
+    }
+    return n(num)
+}
+
+function getDimShiftAffect(){
+    return n(1.25)
+}
+
 function spaceUpgradesText(num, eff){
     let display = num
     if(n(num).eq(format(num, 0))){
         display = format(num, 0)
     }else if(n(num).eq(format(num, 1))){
         display = format(num, 1)
+    }else if(n(num).eq(format(num, 2))){
+        display = format(num, 2)
     }else{
         display = format(num)
     }
@@ -98,10 +142,7 @@ function getIlluminationBase(){
 
 function getIllumination(){
     let ex = n(0)
-    /*if(player.s.green && player.s.blue){
-        ex = n(tmp.s.getCyanEffect)
-    }*/
-
+    
     let milestone = n(0)
     if(hasMilestone('s', 1)){
         milestone = n(tmp.s.milestones[1].effect)
@@ -161,6 +202,7 @@ function getContractingRequirement(){
 
 function volumeReset(){
     player.s.upgrades = []
+    player.s.upgradesBought = []
     player.s.points = n(0)
     player.s.best = n(0)
     player.s.warp = n(0)
@@ -213,7 +255,7 @@ addLayer("s", {
         contracting: false,
         tempSpace: n(0),
 
-        volumeUnlocked: false
+        upgradesBought: []
     }},
     color: "#fff",
     nodeStyle: {'border-color': '#DFDFDF'},
@@ -340,9 +382,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 11)},
-            tooltip(){return 'f(x) = ⌈log<sub>2</sub>(x)⌉<br>x = '+format(Dim1Base())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>2</sub>(一维时空数量)会给与额外的一维时空(向上取整)*</grey><br>基础效果: +'+format(this.effect())},
-            effect(){return n(Dim1Base()).max(1).log(2).ceil()}
+            unlocked(){return hasUpgrade('s', 11) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = ⌈log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(x)⌉<br>x = '+format(Dim1Base())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(一维时空数量)会给与额外的一维时空(向上取整)*</grey><br>基础效果: +'+format(this.effect())},
+            red(){
+                let red = n(2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    red = red.div(upgradeEffect('s', 'd'+this.id))
+                }
+                return red
+            },
+            effect(){return n(Dim1Base()).max(1).log(this.red()).ceil()}
         },
         22: {
             title: "时空协同[s22]",
@@ -355,9 +404,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 11)},
-            tooltip(){return 'f(x) = 0.5lg(x)<br>x = '+format(Dim1BaseGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: lg(一维时空的基础生产)×0.5提升其倍率*</grey><br>基础效果: +'+format(this.effect())+'×'},
-            effect(){return n(Dim1BaseGain()).max(1).log(10).mul(0.5)}
+            unlocked(){return hasUpgrade('s', 11) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'lg(x)<br>x = '+format(Dim1BaseGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: lg(一维时空的基础生产)×'+spaceUpgradesText(n(this.green()), true)+'提升其倍率*</grey><br>基础效果: +'+format(this.effect())+'×'},
+            green(){
+                let green = n(0.5)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(Dim1BaseGain()).max(1).log(10).mul(this.green())}
         },
 
         31: {
@@ -385,9 +441,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 21)},
-            tooltip(){return 'f(x) = 1.2x<br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间数量×1.2提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(getSpaceAmount()).mul(1.2).max(1)}
+            unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间数量×'+spaceUpgradesText(n(this.green()), true)+'提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
+            green(){
+                let green = n(1.2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(getSpaceAmount()).mul(this.green()).max(1)}
         },
         23: {
             title: "空间协同[s23]",
@@ -400,9 +463,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 21)},
-            tooltip(){return 'f(x) = x<sup>2</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>2</sup>降低空间需求*</grey><br>基础效果: ÷'+format(this.effect())},
-            effect(){return n(getSpaceAmount()).pow(2).max(1)}
+            unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>降低空间需求*</grey><br>基础效果: ÷'+format(this.effect())},
+            green(){
+                let green = n(2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(getSpaceAmount()).pow(this.green()).max(1)}
         },
         32: {
             title: "时空协调[s32]",
@@ -415,14 +485,21 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 21)},
-            tooltip(){return 'f(x) = x<br>x = 0.2'+(hasUpgrade('s', 23) ? '×(s33)' : '')+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒获得0.15一维时空*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
+            unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+(hasUpgrade('s', 23) ? '(s33)' : '1')+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒获得'+spaceUpgradesText(n(this.green()), true)+'一维时空*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
+            green(){
+                let green = n(0.2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
             effect(){
                 let effect = n(1)
                 if(hasUpgrade('s', 33)){
                     effect = effect.mul(upgradeEffect('s', 33))
                 }
-                return effect.mul(0.2)
+                return effect.mul(this.green())
             }
         },
         33: {
@@ -436,9 +513,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 21)},
-            tooltip(){return 'f(x) = x<sup>2</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>2</sup>提升[s32]的效果*</grey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(getSpaceAmount()).pow(2).max(1)}
+            unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升[s32]的效果*</grey><br>基础效果: ×'+format(this.effect())},
+            green(){
+                let green = n(2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(getSpaceAmount()).pow(this.green()).max(1)}
         },
         
         41: {
@@ -468,9 +552,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = 0.8x<br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 扭曲空间效果×0.8提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(getWarpSpaceEffect()).mul(0.8).max(1)}
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 扭曲空间效果×'+spaceUpgradesText(n(this.green()), true)+'提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
+            green(){
+                let green = n(0.8)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(getWarpSpaceEffect()).mul(this.green()).max(1)}
         },
         24: {
             title: "扭曲协同[s24]",
@@ -483,9 +574,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = log<sub>2</sub>(x)<br>x = '+format(getWarpAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>2</sub>(扭曲空间数量)提升「进行空间扭曲」的效果*</grey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(getWarpAmount()).max(1).log(2).max(1)}
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(x)<br>x = '+format(getWarpAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(扭曲空间数量)提升「进行空间扭曲」的效果*</grey><br>基础效果: ×'+format(this.effect())},
+            red(){
+                let red = n(2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    red = red.div(upgradeEffect('s', 'd'+this.id))
+                }
+                return red
+            },
+            effect(){return n(getWarpAmount()).max(1).log(this.red()).max(1)}
         },
         34: {
             title: "扭曲协调[s34]",
@@ -498,10 +596,24 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = 0.01x<sup>0.5</sup><br>x = '+format(getWarpGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒被动获得<br>(「进行空间扭曲」的效果)<sup>0.5</sup>×0.01扭曲空间*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>/'+spaceUpgradesText(n(this.red()), false)+'<br>x = '+format(getWarpGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒被动获得<br>(「进行空间扭曲」的效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>/'+spaceUpgradesText(n(this.red()), false)+'扭曲空间*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
+            red(){
+                let red = n(100)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    red = red.div(upgradeEffect('s', 'd'+this.id))
+                }
+                return red
+            },
+            green(){
+                let green = n(0.5)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
             effect(){
-                return n(getWarpGain()).pow(0.5).mul(0.01)
+                return n(getWarpGain()).pow(this.green()).div(this.red())
             }
         },
         42: {
@@ -515,9 +627,16 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = 2x<br>x = '+format(Dim1Extra())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 额外一维时空数量×2直接倍增一维时空数量*</grey><br><darkgrey>*如果此升级不能提升一维时空的产量则不会生效*</darkgrey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(Dim1Extra()).mul(2)}
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(Dim1Extra())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 额外一维时空数量×'+spaceUpgradesText(n(this.green()), true)+'直接倍增一维时空数量*</grey><br><darkgrey>*如果此升级不能提升一维时空的产量则不会生效*</darkgrey><br>基础效果: ×'+format(this.effect())},
+            green(){
+                let green = n(2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(Dim1Extra()).mul(this.green())}
         },
         43: {
             title: "空间改善[s43]",
@@ -530,22 +649,28 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = (x-'+spaceUpgradesText(n(this.red()), false)+')/(x-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.green()), true)+')<br>x = '+format(n(getOriginalPointGain()).max(1).log(10).max(1))+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间价格底数降低<br>(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+')/(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.green()), true)+')的八倍*</grey><br>基础效果: -'+format(this.effect())},
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = (x-'+spaceUpgradesText(n(this.red()), false)+')/(x-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')<br>x = '+format(n(getOriginalPointGain()).max(1).log(10).max(1))+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间价格底数降低<br>(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+')/(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')的八倍*</grey><br><darkgrey>*八倍的效果公式在空间价格公式之中*</darkgrey><br>基础效果: -'+format(this.effect())},
             red(){
                 let red = n(15)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    red = red.div(upgradeEffect('s', 'd'+this.id))
+                }
                 if(player.s.red && player.s.blue){
                     red = red.sub(tmp.s.getMagentaEffect)
                 }
                 return red
             },
-            green(){
-                let green = n(1)
-                return green
+            red2(){
+                let red2 = n(1)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    red2 = red2.div(upgradeEffect('s', 'd'+this.id))
+                }
+                return red2
             },
             effect(){
                 let x = n(getOriginalPointGain()).max(1).log(10).max(1).sub(this.red()).max(0)
-                return n(x).div(n(x).add(this.green())).max(0)
+                return n(x).div(n(x).add(this.red2())).max(0)
             }
         },
         44: {
@@ -559,9 +684,295 @@ addLayer("s", {
             },
             pay(){return n(0)},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
-            unlocked(){return hasUpgrade('s', 31)},
-            tooltip(){return 'f(x) = x<sup>1.2</sup><br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (扭曲空间效果)<sup>1.2</sup>提升时空悖论获取*</grey><br>基础效果: ×'+format(this.effect())},
-            effect(){return n(getWarpSpaceEffect()).pow(1.2)}
+            unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
+            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (扭曲空间效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升时空悖论获取*</grey><br>基础效果: ×'+format(this.effect())},
+            green(){
+                let green = n(1.2)
+                if(hasUpgrade('s', 'd'+this.id)){
+                    green = green.mul(upgradeEffect('s', 'd'+this.id))
+                }
+                return green
+            },
+            effect(){return n(getWarpSpaceEffect()).pow(this.green())}
+        },
+
+        d12: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d22: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+
+        d13: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d23: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d32: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d33: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+
+        d14: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d24: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d34: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d42: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d43: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
+        },
+        d44: {
+            dimShift(){return true},
+            title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
+            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            cost(){return n(1)},
+            currencyDisplayName(){return '维度提升'},
+            pay(){return n(0)},
+            hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
+            unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
+            tooltip(){
+                let dim = ''
+                if(!hasUpgrade('s', this.id)){
+                    dim = '<br><br><span class="dimShift">再次购买以进行维度提升</span><br>维度提升后公式中所有<br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }else{
+                    dim = '<br><br><span class="dimShift">维度提升</span><br><green>绿色数值</green>×升维效果(×'+format(this.effect())+')<br><red>红色数值</red>÷升维效果(÷'+format(this.effect())+')'
+                }
+                return tmp.s.upgrades[this.id.slice(1)].tooltip+dim
+            },
+            effect(){
+                return getDimShiftAffect()
+            },
+            style(){return getDimShiftClass(this.id)},
         },
     },
     clickables: {
@@ -800,6 +1211,10 @@ addLayer("s", {
                 volumeReset()
                 if(player.s.inVolumeChallenge){
                     player.s.upgrades = [11,21,31,41]
+                }else{
+                    player.s.points = n(34)
+                    player.s.best = n(34)
+                    player.s.upgrades = [11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44]
                 }
             },
             style(){
@@ -899,7 +1314,13 @@ addLayer("s", {
                 doReset('s')
                 doReset('s', true)
 
-                let k = n(player.s.upgrades.length).root(2).floor().min(3)
+                let b = n(0)
+                for(let i in player.s.upgrades){
+                    if(tmp.s.upgrades[player.s.upgrades[i]].dimShift==undefined){
+                        b = b.add(1)
+                    }
+                }
+                let k = n(b).root(2).floor().min(4)
                 let u = []
                 for(let r = 1; r<=k; r++){
                     for(let c = 1; c<=k; c++){
@@ -907,6 +1328,7 @@ addLayer("s", {
                     }
                 }
                 player.s.upgrades = u
+                getDimShiftClass('reset')
             },
             canClick(){return true},
             unlocked(){return !player.s.inVolumeChallenge},
@@ -985,11 +1407,11 @@ addLayer("s", {
         },
         5: {
 			requirementDescription(){return "第五体积里程碑"},
-            effectDescription(){return '奖励: 在体积中解锁升维页面,基于你的体积,你可以对基层进行升维(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            effectDescription(){return '奖励: 基于你的体积,你可以对已购买的基层进行升维(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(12)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                return n(1)
+                return n(2)
             },
         },
         6: {
@@ -1006,32 +1428,34 @@ addLayer("s", {
                 nameI18N(){return 'Base'},
                 content:[
                     ["display-text", function(){return '你还有 <span class="space">'+format(getUnusedSpace(), 0)+' / '+format(player.s.best, 0)+' 空间</span> 未被使用'}],
+                    ["display-text", function(){return n(getDimShiftAmount()).gte(1) ? '你还可以提升 <span class="dimShift">'+format(getUnusedDimShift(), 0)+' / '+format(getDimShiftAmount(), 0)+' </span> 个已购买的基层的维度' : ''}],
+                    ["display-text", function(){return n(getDimShiftAmount()).gte(1) ? '<br>你的升维基础效果为 <span class="dimShift">'+format(getDimShiftAffect())+'</span>' : ''}],
                     ["display-text", function(){return player.s.inVolumeChallenge ? '你正在体积挑战中,它使你的基层价格发生了改变' : ''}],
                     'blank',
                     'blank',
                     ['row', [
                         ['upgrade', 41],
-                        ['upgrade', 42],
-                        ['upgrade', 43],
-                        ['upgrade', 44],
+                        ['upgrade', 42], ['upgrade', 'd42'],
+                        ['upgrade', 43], ['upgrade', 'd43'],
+                        ['upgrade', 44], ['upgrade', 'd44'],
                     ]],
                     ['row', [
                         ['upgrade', 31],
-                        ['upgrade', 32],
-                        ['upgrade', 33],
-                        ['upgrade', 34],
+                        ['upgrade', 32], ['upgrade', 'd32'],
+                        ['upgrade', 33], ['upgrade', 'd33'],
+                        ['upgrade', 34], ['upgrade', 'd34'],
                     ]],
                     ['row', [
                         ['upgrade', 21],
-                        ['upgrade', 22],
-                        ['upgrade', 23],
-                        ['upgrade', 24],
+                        ['upgrade', 22], ['upgrade', 'd22'],
+                        ['upgrade', 23], ['upgrade', 'd23'],
+                        ['upgrade', 24], ['upgrade', 'd24'],
                     ]],
                     ['row', [
                         ['upgrade', 11],
-                        ['upgrade', 12],
-                        ['upgrade', 13],
-                        ['upgrade', 14],
+                        ['upgrade', 12], ['upgrade', 'd12'],
+                        ['upgrade', 13], ['upgrade', 'd13'],
+                        ['upgrade', 14], ['upgrade', 'd14'],
                     ]],
                     'blank',
                     'blank',
@@ -1177,6 +1601,7 @@ addLayer("s", {
                 ]
             },
         },
+
         affect:{
             "affect": {
                 name(){return '影响'},
