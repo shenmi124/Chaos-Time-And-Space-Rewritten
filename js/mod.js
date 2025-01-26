@@ -38,7 +38,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.06",
+	num: "0.07",
 	name: "Space!",
 }
 
@@ -151,7 +151,7 @@ function displayThingsRes(){
 
 // Determines when the game "ends"
 function isEndgame() {
-	return n(getVolume()).gte(99)
+	return n(getVolume()).gte(20)
 }
 
 // 

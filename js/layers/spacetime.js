@@ -5,6 +5,9 @@ function Dim1Unlocked(){
 function Dim1Extra(){
     let base = n(0)
     if(hasUpgrade('s', 12)){base = base.add(upgradeEffect('s', 12))}
+    if(player.s.green && player.s.blue){
+        base = base.add(tmp.s.getCyanEffect)
+    }
     return base
 }
 
@@ -12,9 +15,6 @@ function Dim1MultExtra(){
     let base = n(0)
     if(hasUpgrade('s', 42)){
         base = n(upgradeEffect('s', 42))
-    }
-    if(player.s.green && player.s.blue){
-        base = base.add(tmp.s.getCyanEffect)
     }
     return base
 }

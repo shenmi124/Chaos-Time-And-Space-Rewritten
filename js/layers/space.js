@@ -65,7 +65,7 @@ function getDimShiftAmount(){
 }
 
 function getDimShiftAffect(){
-    return n(1.25)
+    return n(1.5)
 }
 
 function spaceUpgradesText(num, eff){
@@ -167,9 +167,9 @@ function getChallengeAffect(){
 }
 
 function getVolumeChallengeUpgradesCost(id){
-    let upgAmount = n(player.s.upgrades.length).sub(4)
-    if(player.s.upgrades.indexOf(Number(id))!==-1){
-        return n(player.s.upgrades.indexOf(Number(id))).sub(4)
+    let upgAmount = n(player.s.normalUpgrades.length).sub(4)
+    if(player.s.normalUpgrades.indexOf(Number(id))!==-1){
+        return n(player.s.normalUpgrades.indexOf(Number(id))).sub(4)
     }
     return upgAmount
 }
@@ -202,6 +202,7 @@ function getContractingRequirement(){
 
 function volumeReset(){
     player.s.upgrades = []
+    player.s.normalUpgrades = []
     player.s.upgradesBought = []
     player.s.points = n(0)
     player.s.best = n(0)
@@ -255,6 +256,7 @@ addLayer("s", {
         contracting: false,
         tempSpace: n(0),
 
+        normalUpgrades: [],
         upgradesBought: []
     }},
     color: "#fff",
@@ -307,16 +309,28 @@ addLayer("s", {
         return n(getIllumination()).pow(1.25)
     },
     getBlueEffect(){
-        return n(getIllumination()).pow(0.75).max(1)
+        let pow = n(0.75)
+        if(hasMilestone('s', 7)){
+            pow = pow.add(tmp.s.milestones[7].effect)
+        }
+        return n(getIllumination()).pow(pow).max(1)
     },
     getYellowEffect(){
         return n(getIllumination()).pow(2).max(1)
     },
     getMagentaEffect(){
-        return n(getIllumination()).pow(0.5).min(15)
+        let pow = n(0.5)
+        if(hasMilestone('s', 7)){
+            pow = pow.add(tmp.s.milestones[7].effect)
+        }
+        return n(getIllumination()).pow(pow).min(15)
     },
     getCyanEffect(){
-        return n(getIllumination()).pow(1.5).max(1)
+        let pow = n(1.5)
+        if(hasMilestone('s', 7)){
+            pow = pow.add(tmp.s.milestones[7].effect)
+        }
+        return n(getIllumination()).pow(pow).max(1)
     },
     update(diff){
         let gain = n(getWarpGen())
@@ -351,7 +365,7 @@ addLayer("s", {
             title: "基层利用",
             description: "扩建,并解锁一维时空(在时空中)",
             cost(){return n(0)},
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=0},
             unlocked(){return true},
             tooltip(){return getSpaceBaseTooltip(this.id)}
@@ -366,7 +380,7 @@ addLayer("s", {
                 }
                 return n(1)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=3},
             unlocked(){return hasUpgrade('s', 11)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
@@ -380,7 +394,7 @@ addLayer("s", {
                 }
                 return n(1)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 11) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = ⌈log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(x)⌉<br>x = '+format(Dim1Base())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(一维时空数量)会给与额外的一维时空(向上取整)*</grey><br>基础效果: +'+format(this.effect())},
@@ -402,7 +416,7 @@ addLayer("s", {
                 }
                 return n(1)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 11) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'lg(x)<br>x = '+format(Dim1BaseGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: lg(一维时空的基础生产)×'+spaceUpgradesText(n(this.green()), true)+'提升其倍率*</grey><br>基础效果: +'+format(this.effect())+'×'},
@@ -425,7 +439,7 @@ addLayer("s", {
                 }
                 return n(2)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=8},
             unlocked(){return hasUpgrade('s', 21)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
@@ -439,7 +453,7 @@ addLayer("s", {
                 }
                 return n(2)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间数量×'+spaceUpgradesText(n(this.green()), true)+'提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
@@ -461,7 +475,7 @@ addLayer("s", {
                 }
                 return n(2)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>降低空间需求*</grey><br>基础效果: ÷'+format(this.effect())},
@@ -483,7 +497,7 @@ addLayer("s", {
                 }
                 return n(2)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+(hasUpgrade('s', 23) ? '(s33)' : '1')+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒获得'+spaceUpgradesText(n(this.green()), true)+'一维时空*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
@@ -511,7 +525,7 @@ addLayer("s", {
                 }
                 return n(2)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 21) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getSpaceAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (空间数量)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升[s32]的效果*</grey><br>基础效果: ×'+format(this.effect())},
@@ -534,9 +548,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){
-                player.s.volumeUnlocked = true
-            },
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=15},
             unlocked(){return hasUpgrade('s', 31)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
@@ -550,7 +562,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 扭曲空间效果×'+spaceUpgradesText(n(this.green()), true)+'提升一维时空产量*</grey><br>基础效果: ×'+format(this.effect())},
@@ -572,7 +584,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(x)<br>x = '+format(getWarpAmount())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: log<sub>'+spaceUpgradesText(n(this.red()), false)+'</sub>(扭曲空间数量)提升「进行空间扭曲」的效果*</grey><br>基础效果: ×'+format(this.effect())},
@@ -594,7 +606,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>/'+spaceUpgradesText(n(this.red()), false)+'<br>x = '+format(getWarpGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 每秒被动获得<br>(「进行空间扭曲」的效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>/'+spaceUpgradesText(n(this.red()), false)+'扭曲空间*</grey><br>基础效果: '+format(this.effect())+'/s<br>实际效果: '+format(n(this.effect()).mul(getTimeSpeed()))+'/s'},
@@ -625,7 +637,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'x<br>x = '+format(Dim1Extra())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 额外一维时空数量×'+spaceUpgradesText(n(this.green()), true)+'直接倍增一维时空数量*</grey><br><darkgrey>*如果此升级不能提升一维时空的产量则不会生效*</darkgrey><br>基础效果: ×'+format(this.effect())},
@@ -647,7 +659,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = (x-'+spaceUpgradesText(n(this.red()), false)+')/(x-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')<br>x = '+format(n(getOriginalPointGain()).max(1).log(10).max(1))+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间价格底数降低<br>(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+')/(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')的八倍*</grey><br><darkgrey>*八倍的效果公式在空间价格公式之中*</darkgrey><br>基础效果: -'+format(this.effect())},
@@ -659,7 +671,10 @@ addLayer("s", {
                 if(player.s.red && player.s.blue){
                     red = red.sub(tmp.s.getMagentaEffect)
                 }
-                return red
+                if(hasMilestone('s', 6)){
+                    red = red.sub(tmp.s.milestones[6].effect)
+                }
+                return red.max(0)
             },
             red2(){
                 let red2 = n(1)
@@ -682,7 +697,7 @@ addLayer("s", {
                 }
                 return n(3)
             },
-            pay(){return n(0)},
+            pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
             tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (扭曲空间效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升时空悖论获取*</grey><br>基础效果: ×'+format(this.effect())},
@@ -699,10 +714,9 @@ addLayer("s", {
         d12: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -722,10 +736,9 @@ addLayer("s", {
         d22: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -746,10 +759,9 @@ addLayer("s", {
         d13: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -769,10 +781,9 @@ addLayer("s", {
         d23: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -792,10 +803,9 @@ addLayer("s", {
         d32: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -815,10 +825,9 @@ addLayer("s", {
         d33: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -839,10 +848,9 @@ addLayer("s", {
         d14: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -862,10 +870,9 @@ addLayer("s", {
         d24: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -885,10 +892,9 @@ addLayer("s", {
         d34: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -908,10 +914,9 @@ addLayer("s", {
         d42: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -931,10 +936,9 @@ addLayer("s", {
         d43: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -954,10 +958,9 @@ addLayer("s", {
         d44: {
             dimShift(){return true},
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
-            description(){return  tmp.s.upgrades[this.id.slice(1)].description},
+            description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
             currencyDisplayName(){return '维度提升'},
-            pay(){return n(0)},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
             tooltip(){
@@ -992,7 +995,7 @@ addLayer("s", {
                     unlock += '<br><br><yellowlit><big>黄光源</big></yellowlit><br>黄光源可以倍增空间数量<br>'
                     unlock += 'f(x) = x<sup>2</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getYellowEffect)
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
                 if(player.s.green && getPrismAmount()){
@@ -1004,7 +1007,7 @@ addLayer("s", {
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
                 if(player.s.red && player.s.green){
@@ -1014,7 +1017,7 @@ addLayer("s", {
 
                 if(player.s.red && player.s.blue){
                     effect += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    effect += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    effect += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
                 let tip = ''
@@ -1051,7 +1054,7 @@ addLayer("s", {
                     unlock += '<br><br><yellowlit><big>黄光源</big></yellowlit><br>黄光源可以倍增空间数量<br>'
                     unlock += 'f(x) = x<sup>2</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getYellowEffect)
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 if(player.s.red && getPrismAmount()){
@@ -1063,7 +1066,7 @@ addLayer("s", {
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 if(player.s.red && player.s.green){
@@ -1073,7 +1076,7 @@ addLayer("s", {
 
                 if(player.s.green && player.s.blue){
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 let tip = ''
@@ -1102,37 +1105,37 @@ addLayer("s", {
             branches(){return ['red']},
             tooltip(){
                 let effect = '<bluelit><big>蓝光源</big></bluelit><br>蓝光源可以提升你的时间速率<br>'
-                effect += 'f(x) = x<sup>0.75</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getBlueEffect)
+                effect += 'f(x) = x<sup>0.75'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getBlueEffect)
 
                 let unlock = ''
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 if(player.s.red && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
                 if(player.s.green && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 if(player.s.red && player.s.blue){
                     unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
-                    unlock += 'f(x) = x<sup>0.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
+                    unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
                 if(player.s.green && player.s.blue){
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
-                    unlock += 'f(x) = x<sup>1.5</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
+                    unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
                 }
 
                 let tip = ''
@@ -1211,10 +1214,12 @@ addLayer("s", {
                 volumeReset()
                 if(player.s.inVolumeChallenge){
                     player.s.upgrades = [11,21,31,41]
+                    player.s.normalUpgrades = [11,21,31,41]
                 }else{
                     player.s.points = n(34)
                     player.s.best = n(34)
                     player.s.upgrades = [11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44]
+                    player.s.normalUpgrades = [11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,44]
                 }
             },
             style(){
@@ -1328,6 +1333,7 @@ addLayer("s", {
                     }
                 }
                 player.s.upgrades = u
+                player.s.normalUpgrades = u
                 getDimShiftClass('reset')
             },
             canClick(){return true},
@@ -1410,16 +1416,38 @@ addLayer("s", {
             effectDescription(){return '奖励: 基于你的体积,你可以对已购买的基层进行升维(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(12)},
             done(){return n(getVolume()).gte(this.req())},
+            tooltip(){return '下一个效果在: '+format(n(this.nextAt()), 0)+' 体积'},
+            nextAt(){
+                return n(this.effect()).add(1).sub(2).mul(180)
+            },
             effect(){
-                return n(2)
+                return n(getVolume()).div(180).floor().add(2)
             },
         },
         6: {
 			requirementDescription(){return "第六体积里程碑"},
+            effectDescription(){return '奖励: 基于体积使[s43]提前生效(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            req(){return n(15)},
+            done(){return n(getVolume()).gte(this.req())},
+            effect(){
+                return n(getVolume()).max(1).log(4)
+            }
+        },
+        7: {
+			requirementDescription(){return "第七体积里程碑"},
+            effectDescription(){return '奖励: 基于体积使蓝光源和其复合色效果指数增加(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            req(){return n(999)},
+            done(){return n(getVolume()).gte(this.req())},
+            effect(){
+                return n(getVolume()).div(12).max(1).log(15).add(2)
+            },
+        },
+        /*7: {
+			requirementDescription(){return "第七体积里程碑"},
             effectDescription(){return '奖励: 解锁寄点层级<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(99)},
             done(){return n(getVolume()).gte(this.req())},
-        },
+        },*/
     },
     microtabs: {
         tab: {
@@ -1585,7 +1613,7 @@ addLayer("s", {
                 unlocked(){return n(getVolume()).gte(2)},
                 content:[
                     ["display-text", function(){return '你已经完成了 <span class="space">'+format(player.s.milestones.length, 0)+'</span> 个体积里程碑'}],
-                    ["display-text", function(){return '下个体积里程碑需要 <span class="space">'+format(tmp.s.milestones[player.s.milestones.length+1].req, 0)+'</span> 体积'}],
+                    ["display-text", function(){return tmp.s.milestones[player.s.milestones.length+1]!==undefined ? '下个体积里程碑需要 <span class="space">'+format(tmp.s.milestones[player.s.milestones.length+1].req, 0)+'</span> 体积' : ''}],
                     'blank',
                     'blank',
                     ['milestone', 1],
