@@ -1321,19 +1321,19 @@ addLayer("s", {
 
                 let b = n(0)
                 for(let i in player.s.normalUpgrades){
-                    if(tmp.s.upgrades[player.s.upgrades[i]].dimShift==undefined){
+                    if(tmp.s.upgrades[player.s.normalUpgrades[i]].dimShift==undefined){
                         b = b.add(1)
                     }
                 }
                 let k = n(b).root(2).floor().min(4)
-                let u = []
+                player.s.upgrades = []
+                player.s.normalUpgrades = []
                 for(let r = 1; r<=k; r++){
                     for(let c = 1; c<=k; c++){
-                        u.push(Number(r*10+c))
+                        player.s.upgrades.push(Number(r*10+c))
+                        player.s.normalUpgrades.push(Number(r*10+c))
                     }
                 }
-                player.s.upgrades = u
-                player.s.normalUpgrades = u
                 getDimShiftClass('reset')
             },
             canClick(){return true},
