@@ -32,13 +32,13 @@ function getDimShiftClass(id){
     if(id=='reset'){
         for(let i in tmp.s.upgrades){
             if(tmp.s.upgrades[i].dimShift!==undefined){
-                player.s.upgradesBought.push(id)
+                player.s.dimboostUpgrades.push(id)
             }
         }
         return
     }
-    if(!hasUpgrade('s', id) && hasUpgrade('s', id.slice(1)) && player.s.upgradesBought.indexOf(id)==-1){
-        player.s.upgradesBought.push(id)
+    if(!hasUpgrade('s', id) && hasUpgrade('s', id.slice(1)) && player.s.dimboostUpgrades.indexOf(id)==-1){
+        player.s.dimboostUpgrades.push(id)
         return {'transform': 'scale(1.15, 1.15)', "animation": "spaceDimShift 5s infinite"}
     }
     return {"animation": "spaceDimShift 5s infinite"}
@@ -203,7 +203,7 @@ function getContractingRequirement(){
 function volumeReset(){
     player.s.upgrades = []
     player.s.normalUpgrades = []
-    player.s.upgradesBought = []
+    player.s.dimboostUpgrades = []
     player.s.points = n(0)
     player.s.best = n(0)
     player.s.warp = n(0)
@@ -257,7 +257,7 @@ addLayer("s", {
         tempSpace: n(0),
 
         normalUpgrades: [],
-        upgradesBought: []
+        dimboostUpgrades: []
     }},
     color: "#fff",
     nodeStyle: {'border-color': '#DFDFDF'},
