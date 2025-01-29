@@ -1,9 +1,9 @@
 function getUnusedSpace(){
     let cost = n(0)
-    for(let i in player.s.upgrades){
-        if(tmp.s.upgrades[player.s.upgrades[i]].dimShift==undefined){
-            if(hasUpgrade('s', player.s.upgrades[i])){
-                cost = cost.add(tmp.s.upgrades[player.s.upgrades[i]].cost)
+    for(let i in player.s.normalUpgrades){
+        if(tmp.s.upgrades[player.s.normalUpgrades[i]].dimShift==undefined){
+            if(hasUpgrade('s', player.s.normalUpgrades[i])){
+                cost = cost.add(tmp.s.upgrades[player.s.normalUpgrades[i]].cost)
             }
         }
     }
@@ -1320,7 +1320,7 @@ addLayer("s", {
                 doReset('s', true)
 
                 let b = n(0)
-                for(let i in player.s.upgrades){
+                for(let i in player.s.normalUpgrades){
                     if(tmp.s.upgrades[player.s.upgrades[i]].dimShift==undefined){
                         b = b.add(1)
                     }
@@ -1544,7 +1544,7 @@ addLayer("s", {
             "volume": {
                 name(){return '体积'},
                 nameI18N(){return 'Volume'},
-                unlocked(){return hasUpgrade('s', 41) || player.s.volumeUnlocked},
+                unlocked(){return hasUpgrade('s', 41) || player.s.inVolumeChallenge},
                 content:[
                     ["display-text", function(){return '你的空间具有 <span class="space">'+format(getVolume())+' 体积</span>'}],
                     'blank',
