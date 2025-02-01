@@ -1436,10 +1436,10 @@ addLayer("s", {
         7: {
 			requirementDescription(){return "第七体积里程碑"},
             effectDescription(){return '奖励: 基于体积使蓝光源和其复合色效果指数增加(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
-            req(){return n(999)},
+            req(){return n(20)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                return n(getVolume()).div(12).max(1).log(15).add(2)
+                return n(getVolume()).max(1).log(100).div(2)
             },
         },
         /*7: {
