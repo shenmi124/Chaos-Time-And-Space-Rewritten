@@ -9,7 +9,7 @@ addLayer("inf", {
     }},
     color: "#fff",
     nodeStyle(){
-        if(!player.p.unlocked){
+        if(!player.inf.unlocked){
             return {}
         }
         return {"background": "linear-gradient(90deg, #fff 0%, #fff 25%, #fff 75%, #fff 100%)"}
