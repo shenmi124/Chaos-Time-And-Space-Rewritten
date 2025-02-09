@@ -1,0 +1,41 @@
+.clickable.si.contracting {
+    transform: scale(1, 1);
+    border-radius: 0%;
+    background-color: #000;
+    border-color: #fff;
+    color: #fff;
+}
+
+.milestone.si {
+    width: 800px;
+    padding-top: 5px;
+    animation: spaceMilestone 5s infinite;
+    border-radius: 0;
+    border: 2px solid;
+    border-color: #fff;
+    background-color: #000;
+    color: #fff;
+}
+
+.milestone.si:hover {
+    background-color: #fff;
+    color: #000;
+    border-color: #000;
+}
+
+.milestoneDone.si {
+    width: 800px;
+    padding-top: 5px;
+    animation: spaceMilestoneDone 5s infinite;
+    border-radius: 0;
+    border: 2px solid;
+    background-color: #fff;
+    color: #000;
+    border-color: #000;
+}
+
+.milestoneDone.si:hover {
+    background-color: #fff;
+    color: #000;
+    border-color: #000;
+}

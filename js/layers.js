@@ -117,6 +117,10 @@ addLayer("help", {
                     ["display-text", function(){return '如果遇到了让你疑惑的机制或者词汇时你可以在这个页面获取帮助'}],
                     ["display-text", function(){return '<br>'}],
                     ["display-text", function(){return '值得一提的是,帮助页面并不会提供游戏上的攻略'}],
+                    ["display-text", function(){return '<br>'}],
+                    ["display-text", function(){return '<red>此外,帮助并未完善</red>'}],
+                    ["display-text", function(){return '<br>'}],
+                    ["display-text", function(){return '官方QQ群:<a class="link" href="https://qm.qq.com/q/axo4Pc8xvG" target="_blank">688646311</a>'}],
                 ],
             },
             "Formula": {
@@ -276,14 +280,6 @@ addLayer("help", {
                 name(){return '体积'},
                 nameI18N(){return 'Volume'},
                 unlocked(){return tmp.s.microtabs.tab.volume.unlocked},
-                content:[
-                    ["display-text", function(){return ''}],
-                ],
-            },
-            "Singularity": {
-                name(){return '奇点'},
-                nameI18N(){return 'Singularity'},
-                unlocked(){return tmp.s.microtabs.tab.singularity.unlocked},
                 content:[
                     ["display-text", function(){return ''}],
                 ],

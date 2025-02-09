@@ -178,6 +178,10 @@ function getVolume(){
     return player.s.x.mul(player.s.y).mul(player.s.z)
 }
 
+function getVolumeAmount(){
+    return n(getVolume()).add(player.s.extraVolume)
+}
+
 function volumeExpectGain(){
     return player.s.xSet.mul(player.s.ySet).mul(player.s.zSet)
 }
@@ -186,18 +190,6 @@ function getVolumeAffect(){
     let baseAffect = n(volumeExpectGain())
     baseAffect = baseAffect.pow(getChallengeDifficulty())
     return [baseAffect, baseAffect, baseAffect]
-}
-
-function getReplicantiSpeed(){
-    return n(1)
-}
-
-function getReplicantiEffect(){
-    return player.s.replicanti.max(1).log(10).pow(1.1).add(1)
-}
-
-function getContractingRequirement(){
-    return player.s.singularity.add(6).pow(2)
 }
 
 function volumeReset(){
@@ -215,19 +207,6 @@ function volumeReset(){
     doReset('s', true)
 }
 
-function singularityReset(){
-    player.s.upgrades = []
-    player.s.points = n(0)
-    player.s.best = n(0)
-    player.s.warp = n(0)
-
-    player.s.red = false
-    player.s.green = false
-    player.s.blue = false
-
-    doReset('s', true)
-}
-
 addLayer("s", {
     name: "space",
     symbol: "空间",
@@ -237,8 +216,8 @@ addLayer("s", {
         unlocked: true,
 		points: n(0),
         warp: n(0),
-        replicanti: n(1),
-        singularity: n(0),
+
+        extraVolume: n(0),
 
         red: false,
         green: false,
@@ -252,9 +231,6 @@ addLayer("s", {
         zSet: n(1),
 
         inVolumeChallenge: false,
-
-        contracting: false,
-        tempSpace: n(0),
 
         normalUpgrades: [],
         dimboostUpgrades: []
@@ -299,14 +275,25 @@ addLayer("s", {
         return n(this.getResetGain()).gte(1)
     },
     canReset(){
-        return n(this.getResetGain()).gte(1) && !hasMilestone('s', 4) && !player.s.contracting
+        return n(this.getResetGain()).gte(1) && !hasMilestone('s', 4) && !player.si.contracting
     },
     row: 2,
+    doReset(resettingLayer){
+        if (layers[resettingLayer].row > layers[this.layer].row) {
+            let keep = []
+            layerDataReset(this.layer, keep)
+
+            if(hasMilestone('si', 1)){
+                player.s.milestones = ['4','8']
+            }
+        }
+    },
     getRedEffect(){
         return n(getIllumination()).pow(1.75).max(1)
     },
     getGreenEffect(){
-        return n(getIllumination()).pow(1.25)
+        let pow = n(1.25)
+        return n(getIllumination()).pow(pow)
     },
     getBlueEffect(){
         let pow = n(0.75)
@@ -316,7 +303,8 @@ addLayer("s", {
         return n(getIllumination()).pow(pow).max(1)
     },
     getYellowEffect(){
-        return n(getIllumination()).pow(2).max(1)
+        let pow = n(2)
+        return n(getIllumination()).pow(pow).max(1)
     },
     getMagentaEffect(){
         let pow = n(0.5)
@@ -336,28 +324,13 @@ addLayer("s", {
         let gain = n(getWarpGen())
         player.s.warp = player.s.warp.add(n(gain).mul(diff))
 
-        if(hasMilestone('s', 4)){
+        if(hasMilestone('s', 4) && !player.si.contracting){
             player.s.points = player.s.points.add(n(this.getResetGain()))
             player.s.best = player.s.best.max(player.s.points)
         }
 
-        if(tmp.s.microtabs.tab.volume.unlocked){
-            player.s.replicanti = player.s.replicanti.mul(n(getReplicantiSpeed()).pow(diff))
-        }
+        if(hasMilestone('si', 1)){
 
-        if(player.s.contracting){
-            player.s.points = player.s.points.div(1.05).sub(0.05).max(0)
-            document.body.style.setProperty('--volume', player.s.points.div(player.s.tempSpace).mul(270).add(30)+'px');
-            document.body.style.setProperty('--volumeMargin', n(1).sub(player.s.points.div(player.s.tempSpace)).mul(270).div(2)+'px');
-            if(player.s.points.eq(0)){
-                player.s.singularity = player.s.singularity.add(1)
-                player.s.contracting = false
-                player.s.tempSpace = n(0)
-                singularityReset()
-            }
-        }else{
-            document.body.style.setProperty('--volume', '300px');
-            document.body.style.setProperty('--volumeMargin', '0px');
         }
     },
     upgrades: {
@@ -994,7 +967,7 @@ addLayer("s", {
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
                     unlock += '<br><br><yellowlit><big>黄光源</big></yellowlit><br>黄光源可以倍增空间数量<br>'
                     unlock += 'f(x) = x<sup>2</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getYellowEffect)
-                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
@@ -1006,7 +979,7 @@ addLayer("s", {
 
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
-                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
@@ -1016,7 +989,7 @@ addLayer("s", {
                 }
 
                 if(player.s.red && player.s.blue){
-                    effect += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    effect += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     effect += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
@@ -1110,7 +1083,7 @@ addLayer("s", {
                 let unlock = ''
                 if(player.s.blue && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
-                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                     unlock += '<br><br><cyanlit><big>青光源</big></cyanlit><br>青光源可以给于额外的一维时空<br>'
                     unlock += 'f(x) = x<sup>1.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getCyanEffect)
@@ -1118,7 +1091,7 @@ addLayer("s", {
 
                 if(player.s.red && getPrismAmount()){
                     unlock += '<br><br>混合光<br>同时激活其他色光以解锁对应的混合光加成'
-                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
@@ -1129,7 +1102,7 @@ addLayer("s", {
                 }
 
                 if(player.s.red && player.s.blue){
-                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s42]提前生效<br>'
+                    unlock += '<br><br><magentalit><big>紫光源</big></magentalit><br>紫光源可以使[s43]提前生效<br>'
                     unlock += 'f(x) = x<sup>0.5'+(hasMilestone('s', 7) ? '+'+format(tmp.s.milestones[7].effect) : '')+'</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getMagentaEffect)
                 }
 
@@ -1184,7 +1157,7 @@ addLayer("s", {
                     体积膨胀挑战<br><br>
                     进入体积膨胀挑战将重置空间点数,基层(最左侧一列除外),扭曲空间和棱柱并进行一次空间重置<br><br>
                     在挑战中<br><br>
-                    购买一维时空将被禁言<br>
+                    购买一维时空将被禁用<br>
                     打乱空间将被禁用<br>
                     进行扭曲空间将被禁用<br>
                     拔出棱柱将被禁用<br>
@@ -1300,19 +1273,6 @@ addLayer("s", {
             },
         },
 
-        contracting: {
-            onClick(){
-                player.s.tempSpace = player.s.points
-                player.s.contracting = true
-            },
-            canClick(){return player.s.points.gte(getContractingRequirement()) && !player.s.contracting},
-            tooltip(){
-            },
-            style(){
-                return {'background': '#000', "border-radius": "100%", 'width': 'var(--volume)', 'height': 'var(--volume)', 'margin': 'var(--volumeMargin)'}
-            },
-        },
-
         11: {
             display(){return '打乱空间<br>进行一次空间重置,并返还已被使用的空间'},
             onClick(){
@@ -1386,7 +1346,7 @@ addLayer("s", {
             req(){return n(2)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                return n(getVolume()).add(16).pow(0.25).max(0)
+                return n(getVolumeAmount()).add(16).pow(0.25).max(0)
             },
         },
         2: {
@@ -1395,7 +1355,7 @@ addLayer("s", {
             req(){return n(3)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                let base = n(getVolume()).max(1).log(10)
+                let base = n(getVolumeAmount()).max(1).log(10)
                 return n(base).pow(2).div(n(base).add(2).pow(2)).add(1.3)
             },
         },
@@ -1416,12 +1376,12 @@ addLayer("s", {
             effectDescription(){return '奖励: 基于你的体积,你可以对已购买的基层进行升维(+'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(12)},
             done(){return n(getVolume()).gte(this.req())},
-            tooltip(){return '下一个效果在: '+format(n(this.nextAt()), 0)+' 体积'},
+            tooltip(){return '下一个升维在: '+format(n(this.nextAt()), 0)+' 体积'},
             nextAt(){
                 return n(this.effect()).add(1).sub(2).mul(180)
             },
             effect(){
-                return n(getVolume()).div(180).floor().add(2)
+                return n(getVolumeAmount()).div(180).floor().add(2)
             },
         },
         6: {
@@ -1430,7 +1390,7 @@ addLayer("s", {
             req(){return n(15)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                return n(getVolume()).max(1).log(4)
+                return n(getVolumeAmount()).max(1).log(4)
             }
         },
         7: {
@@ -1439,13 +1399,19 @@ addLayer("s", {
             req(){return n(20)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
-                return n(getVolume()).max(1).log(100).div(2)
+                return n(getVolumeAmount()).max(1).log(100).div(2)
             },
         },
-        /*7: {
-			requirementDescription(){return "第七体积里程碑"},
-            effectDescription(){return '奖励: 解锁寄点层级<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
-            req(){return n(99)},
+        8: {
+			requirementDescription(){return "第八体积里程碑"},
+            effectDescription(){return '奖励: 解锁寄点(新层级)<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            req(){return n(200)},
+            done(){return n(getVolumeAmount()).gte(this.req())},
+        },
+        /*9: {
+			requirementDescription(){return "第九体积里程碑"},
+            effectDescription(){return '奖励: 解锁二维时空(在时空中)<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            req(){return n(1000)},
             done(){return n(getVolume()).gte(this.req())},
         },*/
     },
@@ -1534,7 +1500,7 @@ addLayer("s", {
                     ["display-text", function(){return player.s.blue ? '基于你的光强, <bluelit>蓝光源</bluelit>为你提供了 '+format(tmp.s.getBlueEffect)+' 倍时间速率' : ''}],
                     'blank',
                     ["display-text", function(){return player.s.red && player.s.green ? '基于你的光强, <yellowlit>黄光源</yellowlit>为你提供了 '+format(tmp.s.getYellowEffect)+' 倍额外空间' : ''}],
-                    ["display-text", function(){return player.s.red && player.s.blue ? '基于你的光强, <magentalit>紫光源</magentalit>为你提供了 [s42]提前 '+format(tmp.s.getMagentaEffect)+' 生效' : ''}],
+                    ["display-text", function(){return player.s.red && player.s.blue ? '基于你的光强, <magentalit>紫光源</magentalit>为你提供了 [s43]提前 '+format(tmp.s.getMagentaEffect)+' 生效' : ''}],
                     ["display-text", function(){return player.s.green && player.s.blue ? '基于你的光强, <cyanlit>青光源</cyanlit>为你提供了 '+format(tmp.s.getCyanEffect)+' 额外一维时空' : ''}],
                     'blank',
                     'blank',
@@ -1544,24 +1510,13 @@ addLayer("s", {
             "volume": {
                 name(){return '体积'},
                 nameI18N(){return 'Volume'},
-                unlocked(){return hasUpgrade('s', 41) || player.s.inVolumeChallenge},
+                unlocked(){return hasUpgrade('s', 41) || player.s.inVolumeChallenge || hasMilestone('si', 1)},
                 content:[
-                    ["display-text", function(){return '你的空间具有 <span class="space">'+format(getVolume())+' 体积</span>'}],
+                    ["display-text", function(){return '你的空间具有 <span class="space">'+format(getVolume())+amountDisplay(getVolume(), getVolumeAmount())+' 体积</span>'}],
                     'blank',
                     ["microtabs", "volume"]
                 ]
             },
-            "singularity": {
-                name(){return '奇点'},
-                nameI18N(){return 'Singularity'},
-                unlocked(){return player.s.singularity.gte(1) && false},
-                content:[
-                    ["display-text", function(){return '你需要收缩 <span class="space">'+format(player.s.points, 0)+' / '+format(getContractingRequirement(), 0)+' 空间</span> 以形成奇点'}],
-                    'blank',
-                    ['clickable', 'contracting'],
-                    ["microtabs", "singularity"]
-                ]
-            }
         },
 
         volume: {
@@ -1610,10 +1565,10 @@ addLayer("s", {
             "milestones": {
                 name(){return '里程碑'},
                 nameI18N(){return 'Milestones'},
-                unlocked(){return n(getVolume()).gte(2)},
+                unlocked(){return n(getVolume()).gte(2) || hasMilestone('si', 1)},
                 content:[
-                    ["display-text", function(){return '你已经完成了 <span class="space">'+format(player.s.milestones.length, 0)+'</span> 个体积里程碑'}],
-                    ["display-text", function(){return tmp.s.milestones[player.s.milestones.length+1]!==undefined ? '下个体积里程碑需要 <span class="space">'+format(tmp.s.milestones[player.s.milestones.length+1].req, 0)+'</span> 体积' : ''}],
+                    ["display-text", function(){return '你已完成了 <span class="space">'+format(player.s.milestones.length, 0)+'</span> 个体积里程碑'}],
+                    ["display-text", function(){return tmp.s.milestones[player.s.milestones.length+1]!==undefined && tmp.si.unlocked ? '下个体积里程碑需要 <span class="space">'+format(tmp.s.milestones[player.s.milestones.length+1].req, 0)+'</span> 体积' : ''}],
                     'blank',
                     'blank',
                     ['milestone', 1],
@@ -1624,6 +1579,7 @@ addLayer("s", {
                     ['milestone', 6],
                     ['milestone', 7],
                     ['milestone', 8],
+                    //['milestone', 9],
                     'blank',
                     'blank',
                 ]
@@ -1692,24 +1648,6 @@ addLayer("s", {
                 ]
             },
         },
-
-        singularity: {
-            "milestone": {
-                name(){return '里程碑'},
-                nameI18N(){return 'Milestone'},
-                unlocked(){return true},
-            },
-            "replicanti": {
-                name(){return '复制品'},
-                nameI18N(){return 'Replicanti'},
-                unlocked(){return false},
-                content:[
-                    ["display-text", function(){return '你有 <span class="replicanti">'+format(player.s.replicanti)+'</span> 复制品'}],
-                    ["display-text", function(){return '你的体积使你的复制品每现实秒<span class="replicanti" style="font-size: 24px">×'+format(getReplicantiSpeed())+'</span> '}],
-                    ["display-text", function(){return '你的复制品使时空悖论产量<span class="replicanti" style="font-size: 24px">×'+format(getReplicantiEffect())+'</span> '}],
-                ]
-            },
-        }
     },
     tabFormat: [
        ["display-text", function() { return getPointsDisplay() }],

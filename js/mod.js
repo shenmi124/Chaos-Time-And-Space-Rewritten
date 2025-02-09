@@ -5,9 +5,9 @@ let modInfo = {
 	author: "辉影神秘(Shinwmyste)",
 	pointsName: "时空悖论",
 	pointsNameI18N: "Space Time Paradox",// When you enabled the internationalizationMod, this is the name in the second language
-	modFiles: ["layers.js", "tree.js", "layers/spacetime.js", "layers/space.js"],
+	modFiles: ["layers.js", "tree.js", "layers/spacetime.js", "layers/space.js", "layers/singularity.js", "layers/infinity.js"],
 
-	internationalizationMod: true,
+	internationalizationMod: false,
 	changedDefaultLanguage: true,
 
 	forceOneTab: false,// Enable Single-Tab Mode (This feature doesn't work as smoothly as you might expect; it's designed for experts)
@@ -38,8 +38,8 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.07",
-	name: "Space!",
+	num: "0.1",
+	name: "Singularity!",
 }
 
 function changelog(){
@@ -83,7 +83,8 @@ function getOriginalPointGain(){
 	if(player.s.inVolumeChallenge){
 		mul = mul.div(getChallengeAffect())
 	}
-	//mul = mul.mul(getReplicantiEffect())
+
+	mul = mul.mul(getReplicantiEffect())
 
 	let pow = n(1)
 	if(hasMilestone('s', 2) && base.mul(mul).gte(1)){
@@ -92,7 +93,10 @@ function getOriginalPointGain(){
 	return base.mul(mul).pow(pow)
 }
 
-function getPointGen() {
+function getPointGen(){
+	if(player.s.contracting){
+		return n(0)
+	}
 	return n(getOriginalPointGain()).mul(getTimeSpeed())
 }
 
@@ -120,16 +124,15 @@ var displayThings = [
 // You can write code here to easily display information in the top-left corner
 function displayThingsRes(){
 	let spacetime = ''
-	let space = ''
-	let warp = ''
-	let prism = ''
-	let volume = ''
-
 	spacetime = `
 	${(i18n("时空悖论", "时空悖论"))}: `+format(player.points)+` (+`+format(getPointGen())+`/s) | 
 	<br>
 	${(i18n("时间速率", "时间速率"))}: `+format(getTimeSpeed())+`× | `
 
+	let space = ''
+	let warp = ''
+	let prism = ''
+	let volume = ''
 	if(tmp.s.layerShown){
 		space = `<br>
 		${(i18n("空间", "空间"))}: `+format(player.s.points)+amountDisplay(player.s.points, getSpaceAmount())+` | `
@@ -142,16 +145,26 @@ function displayThingsRes(){
 		}
 		if(tmp.s.microtabs.tab.volume.unlocked){
 			volume = `<br>
-			${(i18n("体积", "体积"))}: `+format(getVolume())+` | `
+			${(i18n("体积", "体积"))}: `+format(getVolume())+amountDisplay(getVolume(), getVolumeAmount())+` | `
 		}
 	}
 
-	return spacetime+space+warp+prism+volume
+	let singularity = ''
+	let replicanti = ''
+	if(tmp.si.layerShown){
+		singularity = `<br>
+		${(i18n("奇点", "奇点"))}: `+format(player.si.points)+` | `
+		if(tmp.si.microtabs.tab.replicanti.unlocked){
+			replicanti = `${(i18n("复制品", "复制品"))}: `+format(player.si.replicanti)+` | `
+		}
+	}
+
+	return spacetime+space+warp+prism+volume+singularity+replicanti
 }
 
 // Determines when the game "ends"
 function isEndgame() {
-	return n(getVolume()).gte(20)
+	return player.si.points.gte(1)
 }
 
 // 
@@ -176,6 +189,7 @@ function getPointsDisplay(){
 		a += `<div style="margin-top: 3px"></div>`
 	}
 	a += player.s.inVolumeChallenge ? '<red>!</red>你正在体积挑战中<red>!</red><br>' : ''
+	a += player.si.contracting ? '<red>!</red>奇点正在收缩<red>!</red><br>' : ''
 	a += tmp.displayThings
 	a += '<br><br>'
 	return a

@@ -35,8 +35,8 @@
     color: unset;
 }
 
-.replicanti {
-    color: #03a9f4;
+.singularity {
+    color: #fff;
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 1px 1px 1px #fff;
     font-size: 36px;
 }
@@ -101,6 +101,10 @@ grey {
 
 darkgrey {
     color: grey;
+}
+
+white {
+    color: white;
 }
 
 black {
