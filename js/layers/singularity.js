@@ -66,6 +66,9 @@ addLayer("si", {
                 doReset('si', true)
                 player.s.normalUpgrades = []
                 player.s.upgradesBought = []
+                if(hasMilestone('si', 1)){
+                    player.s.milestones = ['4','8']
+                }
             }
         }else{
             document.body.style.setProperty('--volume', '300px');

@@ -44,7 +44,7 @@ let VERSION = {
 
 function changelog(){
 	return ''
-} 
+}
 
 function winText(){
 	return i18n(`你暂时完成了游戏!`, `Congratulations! You have reached the end and beaten this game, but for now...`)
