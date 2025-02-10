@@ -66,7 +66,7 @@ addLayer("si", {
                 doReset('si', true)
                 player.s.normalUpgrades = []
                 player.s.upgradesBought = []
-                if(hasMilestone('si', 1)){
+                if(tmp.si.milestones[1].req){
                     player.s.milestones = ['4','8']
                 }
             }
@@ -154,7 +154,7 @@ addLayer("si", {
                 nameI18N(){return 'Milestones'},
                 content:[
                     ["display-text", function(){return '你已达到了 <span class="space">'+format(player.si.milestones.length, 0)+'</span> 个奇点里程碑'}],
-                    ["display-text", function(){return tmp.si.milestones[player.si.milestones.length+1]!==undefined ? '下个奇点里程碑需要 <span class="space">'+format(tmp.s.milestones[player.s.milestones.length+1].req, 0)+'</span> 奇点' : ''}],
+                    ["display-text", function(){return tmp.si.milestones[player.si.milestones.length+1]!==undefined ? '下个奇点里程碑需要 <span class="space">'+format(tmp.s.milestones[player.si.milestones.length+1].req, 0)+'</span> 奇点' : ''}],
                     'blank',
                     'blank',
                     ['milestone', 1],
