@@ -93,6 +93,14 @@ addLayer("st", {
     nodeStyle: {"background": "linear-gradient(90deg, #97f1ee 0%, #fff 50%, #97f1ee 100%)"},
     update(diff){
         player.st.SpaceTime1Dim = player.st.SpaceTime1Dim.add(n(Dim1Gen()).mul(diff))
+
+        if(window.innerWidth>=1200){
+            document.body.style.setProperty('--dimTableWidth', '150px')
+            document.body.style.setProperty('--dimTableFont', '20px')
+        }else{
+            document.body.style.setProperty('--dimTableWidth', '75px')
+            document.body.style.setProperty('--dimTableFont', '10px')
+        }
     },
     buyables: {
         1: {

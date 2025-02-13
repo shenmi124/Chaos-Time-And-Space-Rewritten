@@ -139,9 +139,9 @@ addLayer("si", {
                 nameI18N(){return 'Replicanti'},
                 unlocked(){return player.si.points.gte(1)},
                 content:[
-                    ["display-text", function(){return '你有 <span class="singularity">'+format(player.si.replicanti)+'</span> 复制品'}],
-                    ["display-text", function(){return '你的奇点使你的复制品每现实秒<span class="singularity" style="font-size: 24px">×'+format(getReplicantiSpeed())+'</span> '}],
-                    ["display-text", function(){return '你的复制品使时空悖论产量<span class="singularity" style="font-size: 24px">×'+format(getReplicantiEffect())+'</span>'}],
+                    ["display-text", function(){return '你有 <span class="replicanti">'+format(player.si.replicanti)+'</span> 复制品'}],
+                    ["display-text", function(){return '你的奇点使你的复制品每现实秒<span class="replicanti" style="font-size: 24px"><mul>×</mul>'+format(getReplicantiSpeed())+'</span> '}],
+                    ["display-text", function(){return '你的复制品使时空悖论产量<span class="replicanti" style="font-size: 24px"><mul>×</mul>'+format(getReplicantiEffect())+'</span>'}],
                     "blank",
                     ["microtabs", "replicanti"]
                 ]
@@ -154,7 +154,7 @@ addLayer("si", {
                 nameI18N(){return 'Milestones'},
                 content:[
                     ["display-text", function(){return '你已达到了 <span class="space">'+format(player.si.milestones.length, 0)+'</span> 个奇点里程碑'}],
-                    ["display-text", function(){return tmp.si.milestones[player.si.milestones.length+1]!==undefined ? '下个奇点里程碑需要 <span class="space">'+format(tmp.s.milestones[player.si.milestones.length+1].req, 0)+'</span> 奇点' : ''}],
+                    ["display-text", function(){return tmp.si.milestones[player.si.milestones.length+1]!==undefined ? '下个奇点里程碑需要 <span class="space">'+format(tmp.si.milestones[player.si.milestones.length+1].req, 0)+'</span> 奇点' : ''}],
                     'blank',
                     'blank',
                     ['milestone', 1],
@@ -169,7 +169,7 @@ addLayer("si", {
                 nameI18N(){return 'Inform'},
                 unlocked(){return true},
                 content:[
-                    ["display-text", function(){return '你的复制品上限为 <span class="singularity" style="font-size: 24px">'+format(getReplicantiMax())+'</span>'}],
+                    ["display-text", function(){return '你的复制品上限为 <span class="replicanti" style="font-size: 24px">'+format(getReplicantiMax())+'</span>'}],
                 ]
             },
             "infinity": {
@@ -186,7 +186,7 @@ addLayer("si", {
     },
     tabFormat: [
        ["display-text", function() { return getPointsDisplay() }],
-       ["display-text", function(){return '你拥有 <span class="singularity">'+format(player.si.points, 0)+'</span> 奇点, 你的奇点使你的复制品每现实秒<span class="singularity" style="font-size: 24px">×'+format(getReplicantiSpeed())+'</span> '}],
+       ["display-text", function(){return '你拥有 <span class="singularity">'+format(player.si.points, 0)+'</span> 奇点, 你的奇点使你的复制品每现实秒<span class="singularity" style="font-size: 24px"><mul>×</mul>'+format(getReplicantiSpeed())+'</span> '}],
        'blank',
        "blank",
        ["microtabs","tab"]

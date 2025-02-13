@@ -39,3 +39,15 @@
     color: #000;
     border-color: #000;
 }
+
+.tabButton.AcSub.singularity {
+    border-color: #fff;
+    color: #fff;
+    font-size: 25.5px;
+}
+
+.tabButton.AcSub.replicanti {
+    border-color: #fff;
+    color: #fff;
+    font-size: 25.5px;
+}

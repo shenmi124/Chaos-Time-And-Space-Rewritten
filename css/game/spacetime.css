@@ -1,5 +1,5 @@
 .dimTable {
-    width: 150px;
-    font-size: 20px;
+    width: var(--dimTableWidth);
+    font-size: var(--dimTableFont);
     text-align: left;
 }
