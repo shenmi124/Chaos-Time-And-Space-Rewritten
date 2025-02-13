@@ -1,5 +1,5 @@
 function getReplicantiSpeed(){
-    return n(2).pow(player.si.points)
+    return n(1.01).pow(player.si.points)
 }
 
 function getReplicantiEffect(){
@@ -172,10 +172,19 @@ addLayer("si", {
                     ["display-text", function(){return '你的复制品上限为 <span class="replicanti" style="font-size: 24px">'+format(getReplicantiMax())+'</span>'}],
                 ]
             },
+            "main": {
+                name(){return '主要'},
+                nameI18N(){return 'Main'},
+                unlocked(){return true},
+                content:[
+                    ["display-text", function(){return '你的复制品上限为 <span class="replicanti" style="font-size: 24px">'+format(getReplicantiMax())+'</span>'}],
+                    ["display-text", function(){return '你已达残局,请等待下次更新'}],
+                ]
+            },
             "infinity": {
                 name(){return '无限'},
                 nameI18N(){return 'Infinity'},
-                unlocked(){return true},
+                unlocked(){return false},
                 content:[                  
                     'blank',
                     ['clickable', 'infinity'],
