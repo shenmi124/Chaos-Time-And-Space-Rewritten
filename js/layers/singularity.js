@@ -101,15 +101,15 @@ addLayer("si", {
                 doReset('si', true)
                 player.s.normalUpgrades = []
                 player.s.upgradesBought = []     
-                if(hasMilestone('si', 1) || tmp.si.milestones[1].req){
+                if(hasMilestone('si', 1) || tmp.si.milestones[1].done){
                     player.s.milestones.push('4')
                     player.s.milestones.push('8')
                 }
-                if(hasMilestone('si', 2) || tmp.si.milestones[2].req){
+                if(hasMilestone('si', 2) || tmp.si.milestones[2].done){
                     player.s.milestones.push('2')
                     player.s.milestones.push('3')
                 }
-                if(hasMilestone('si', 3) || tmp.si.milestones[3].req){
+                if(hasMilestone('si', 3) || tmp.si.milestones[3].done){
                     player.s.milestones.push('1')
                     player.s.milestones.push('5')
                 }
