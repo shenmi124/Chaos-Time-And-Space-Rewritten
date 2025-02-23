@@ -38,7 +38,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
+	num: "0.11",
 	name: "Singularity!",
 }
 
@@ -84,7 +84,9 @@ function getOriginalPointGain(){
 		mul = mul.div(getChallengeAffect())
 	}
 
-	mul = mul.mul(getReplicantiEffect())
+	if(hasMilestone('si', 1)){
+		mul = mul.mul(getThermalEnergyEffect())
+	}
 
 	let pow = n(1)
 	if(hasMilestone('s', 2) && base.mul(mul).gte(1)){
@@ -150,21 +152,21 @@ function displayThingsRes(){
 	}
 
 	let singularity = ''
-	let replicanti = ''
+	let thermalEnergy = ''
 	if(tmp.si.layerShown){
 		singularity = `<br>
 		${(i18n("奇点", "奇点"))}: `+format(player.si.points)+` | `
-		if(tmp.si.microtabs.tab.replicanti.unlocked){
-			replicanti = `${(i18n("复制品", "复制品"))}: `+format(player.si.replicanti)+` | `
+		if(tmp.si.microtabs.tab.thermalEnergy.unlocked){
+			thermalEnergy = `${(i18n("热量", "热量"))}: `+format(player.si.thermalEnergy)+` | `
 		}
 	}
 
-	return spacetime+space+warp+prism+volume+singularity+replicanti
+	return spacetime+space+warp+prism+volume+singularity+thermalEnergy
 }
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.si.points.gte(1)
+	return player.si.points.gte(5)
 }
 
 // 

@@ -120,6 +120,9 @@ function getWarpSpaceEffect(){
 
 function getSpaceBaseTooltip(id){
     if(!hasUpgrade('s', id)){
+        if(id==41){
+            return '你需要购买所有其它升级后再来购买这个'
+        }
         return '你需要购买所有其它升级后再来购买这个<br>购买后将解锁更多升级'
     }
     return false
@@ -282,10 +285,6 @@ addLayer("s", {
         if (layers[resettingLayer].row > layers[this.layer].row) {
             let keep = []
             layerDataReset(this.layer, keep)
-
-            if(hasMilestone('si', 1)){
-                player.s.milestones = ['4','8']
-            }
         }
     },
     getRedEffect(){
@@ -1142,7 +1141,7 @@ addLayer("s", {
                 <span class="challengeTable">扭曲空间数量</span><span class="effectTable">/`+format(getVolumeAffect()[1])+`</span>
                 <span class="challengeTable">光强数量</span><span class="effectTable">/`+format(getVolumeAffect()[2])+`</span><br>
                 奖励:
-                `+(n(volumeExpectGain()).gt(getVolume()) ? `获得 `+format(n(volumeExpectGain()).sub(getVolume()))+` 体积` : '你需要进行更难的挑战以获得奖励')+`
+                `+((!player.s.inVolumeChallenge && !hasUpgrade('s', 41)) ? '你需要获得[s41]才能进入挑战' : (n(volumeExpectGain()).gt(getVolume()) ? `获得 `+format(n(volumeExpectGain()).sub(getVolume()))+` 体积` : '你需要进行更难的挑战以获得奖励'))+`
                 `
             },
             tooltip(){
@@ -1175,7 +1174,7 @@ addLayer("s", {
                     `
                 }
             },
-            canClick(){return n(volumeExpectGain()).gt(getVolume())},
+            canClick(){return n(volumeExpectGain()).gt(getVolume()) && (player.s.inVolumeChallenge || hasUpgrade('s', 41))},
             onClick(){
                 if(player.s.inVolumeChallenge && player.s.points.gte(getChallengeDone())){
                     player.s.x = player.s.xSet

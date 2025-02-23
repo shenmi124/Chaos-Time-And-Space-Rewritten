@@ -41,6 +41,12 @@
     font-size: 36px;
 }
 
+.ThermalEnergy {
+    color: darkorange;
+    text-shadow: 0 0 10px darkorange, 0 0 1px #aaaaaa80, 1px 1px 1px #aaa;
+    font-size: 36px;
+}
+
 .replicanti {
     color: #03a9f4;
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 1px 1px 1px #fff;

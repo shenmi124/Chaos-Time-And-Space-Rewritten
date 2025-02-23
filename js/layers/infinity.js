@@ -21,7 +21,7 @@ addLayer("inf", {
         return '无限 <span style="font-size: 11px">解锁于'+format(player.points)+' / 1.797e308</span>'
     },
     type: "none",
-    row: 3, // Row the layer is in on the tree (0 is the first row)
+    row: 4, // Row the layer is in on the tree (0 is the first row)
     update(diff){
         if(player.points.gte('1.797e308')){
             player.inf.unlocked = true
@@ -52,5 +52,5 @@ addLayer("inf", {
             "font-size": '16px',
         },
     },
-    layerShown(){return hasMilestone('s', 8) && false},
+    layerShown(){return hasMilestone('si', 1)},
 })
