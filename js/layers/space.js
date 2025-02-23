@@ -338,7 +338,7 @@ addLayer("s", {
             description: "扩建,并解锁一维时空(在时空中)",
             cost(){return n(0)},
             pay(){player.s.normalUpgrades.push(Number(this.id))},
-            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=0},
+            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.normalUpgrades.length>=0},
             unlocked(){return true},
             tooltip(){return getSpaceBaseTooltip(this.id)}
         },
@@ -353,7 +353,7 @@ addLayer("s", {
                 return n(1)
             },
             pay(){player.s.normalUpgrades.push(Number(this.id))},
-            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=3},
+            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.normalUpgrades.length>=3},
             unlocked(){return hasUpgrade('s', 11)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
         },
@@ -412,7 +412,7 @@ addLayer("s", {
                 return n(2)
             },
             pay(){player.s.normalUpgrades.push(Number(this.id))},
-            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=8},
+            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.normalUpgrades.length>=8},
             unlocked(){return hasUpgrade('s', 21)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
         },
@@ -521,7 +521,7 @@ addLayer("s", {
                 return n(3)
             },
             pay(){player.s.normalUpgrades.push(Number(this.id))},
-            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.upgrades.length>=15},
+            hardAfford(){return n(getUnusedSpace()).gte(this.cost()) && player.s.normalUpgrades.length>=15},
             unlocked(){return hasUpgrade('s', 31)},
             tooltip(){return getSpaceBaseTooltip(this.id)}
         },
