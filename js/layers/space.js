@@ -1327,12 +1327,12 @@ addLayer("s", {
         13: {
             display(){return '拔出棱柱<br>进行一次空间重置并返还你的棱柱'},
             onClick(){
-                doReset('s')
-                doReset('s', true)
-
                 player.s.red = false
                 player.s.green = false
                 player.s.blue = false
+
+                doReset('s')
+                doReset('s', true)
             },
             unlocked(){return !player.s.inVolumeChallenge},
             canClick(){return true},

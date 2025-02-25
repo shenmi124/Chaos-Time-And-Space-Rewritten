@@ -101,15 +101,15 @@ addLayer("si", {
                 doReset('si', true)
                 player.s.normalUpgrades = []
                 player.s.upgradesBought = []     
-                if(hasMilestone('si', 1) || tmp.si.milestones[1].done){
+                if(hasMilestone('si', 1) || layers.si.milestones[1].done()){
                     player.s.milestones.push('4')
                     player.s.milestones.push('8')
                 }
-                if(hasMilestone('si', 2) || tmp.si.milestones[2].done){
+                if(hasMilestone('si', 2) || layers.si.milestones[2].done()){
                     player.s.milestones.push('2')
                     player.s.milestones.push('3')
                 }
-                if(hasMilestone('si', 3) || tmp.si.milestones[3].done){
+                if(hasMilestone('si', 3) || layers.si.milestones[3].done()){
                     player.s.milestones.push('1')
                     player.s.milestones.push('5')
                 }
@@ -130,12 +130,18 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
                 let base = n(0.5).add(buyableEffect('si', 12)).add(buyableEffect('si', 24)).mul(buyableEffect('si', 14)).mul(x).add(1)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
+                }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
                 }
                 return base
             },
@@ -161,12 +167,18 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
                 let base = n(0.5).add(buyableEffect('si', 14)).add(buyableEffect('si', 24)).mul(x)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
+                }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
                 }
                 return base
             },
@@ -262,12 +274,18 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
                 let base = n(0.5).mul(x).pow(1.01).add(1)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
+                }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
                 }
                 return base
             },
@@ -297,12 +315,18 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
                 let base = n(player.si.thermalEnergy).max(1).log(10).mul(x).add(1)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
+                }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
                 }
                 return base
             },
@@ -392,7 +416,8 @@ addLayer("si", {
             effectText: {
                 1(){return '前两行的效果对数提升自身'},
                 2(){return '[si13]的效果同样对[si14],[si21],[si22],[si24]生效'},
-                3(){return '无新效果'},
+                3(){return '[si11],[si12],[s21],[s22]的数量分别对数提升自身'},
+                4(){return '无新效果'},
             },
             tooltip(){
                 let t = '当前已获得效果:'
