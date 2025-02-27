@@ -82,6 +82,10 @@ addLayer("si", {
             player.si.thermalEnergy = player.si.thermalEnergy.add(n(getThermalEnergyGen()).mul(diff)).min(getThermalEnergyMax())
             player.si.thermalEnergyBest = player.si.thermalEnergyBest.max(player.si.thermalEnergy)
         }
+/*
+		if(hasUpgrade("co",15) && player[this.layer].points.gte(b)){setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).add(1))}
+		if(hasUpgrade("co",15) && player[this.layer].points.gte(d)){setBuyableAmount(this.layer, 12, getBuyableAmount(this.layer, 12).add(1))}
+		if(hasUpgrade("co",15) && player[this.layer].points.gte(g)){setBuyableAmount(this.layer, 13, getBuyableAmount(this.layer, 13).add(1))}*/
 
         if(false){
             player.s.extraVolume = player.s.extraVolume.add(n(tmp.si.milestones[1].effect).mul(diff))
@@ -147,7 +151,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -184,7 +190,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -215,7 +223,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -239,6 +249,9 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
@@ -246,11 +259,16 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -291,7 +309,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -332,7 +352,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -348,14 +370,14 @@ addLayer("si", {
                 return n(x).pow(x.mul(0.5)).add(1).mul(1e10)
             },
             effect(x){
-                let base = n(1.05).pow(x)
+                let base = n(0.15).mul(x).add(1)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
-                let base = n(1.05).pow(x)
+                let base = n(0.15).mul(x).add(1)
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
@@ -363,7 +385,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -387,6 +411,9 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             effecNext(x=n(getBuyableAmount(this.layer, this.id)).add(1)){
@@ -394,11 +421,16 @@ addLayer("si", {
                 if(n(getBuyableAmount('si', 31)).gte(1)){
                     base = base.mul(n(base).max(1).log(10).max(1))
                 }
+                if(n(getBuyableAmount('si', 31)).gte(3)){
+                    base = base.mul(x.max(1).log(10).max(1))
+                }
                 return base
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             tooltip(){
@@ -416,8 +448,10 @@ addLayer("si", {
             effectText: {
                 1(){return '前两行的效果对数提升自身'},
                 2(){return '[si13]的效果同样对[si14],[si21],[si22],[si24]生效'},
-                3(){return '[si11],[si12],[s21],[s22]的数量分别对数提升自身'},
-                4(){return '无新效果'},
+                3(){return '[si11],[si12],[si14],[si21],[si22],[si24]的数量分别对数提升自身'},
+                4(){return '无效果'},
+                5(){return '无效果'},
+                6(){return '自动购买前两行,购买前两行不消耗任何'},
             },
             tooltip(){
                 let t = '当前已获得效果:'
@@ -432,7 +466,9 @@ addLayer("si", {
             },
             canAfford(){return player.si.thermalEnergy.gte(layers[this.layer].buyables[this.id].cost())},
             buy(){
-                player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                if(n(getBuyableAmount('si', 31)).lt(4) || true){
+                    player.si.thermalEnergy = player.si.thermalEnergy.sub(this.cost())
+                }
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
                 thermalEnergyReset(true)
             },
@@ -474,7 +510,7 @@ addLayer("si", {
     milestones: {
         1: {
 			requirementDescription(){return "第一奇点里程碑"},
-            effectDescription(){return '奖励: 解锁热量(在奇点中),保留第四和第八体积里程碑<br>需求: 1 奇点'},
+            effectDescription(){return '奖励: 解锁热能(在奇点中),保留第四和第八体积里程碑<br>需求: 1 奇点'},
             req(){return n(1)},
             done(){return n(player.si.points).gte(this.req())},
         },
@@ -593,7 +629,7 @@ addLayer("si", {
     },
     tabFormat: [
        ["display-text", function() { return getPointsDisplay() }],
-       ["display-text", function(){return '你拥有 <span class="singularity">'+format(player.si.points, 0)+'</span> 奇点, 你的奇点使你每真实秒获得 <span class="ThermalEnergy" style="font-size: 24px">'+format(getSingularityEffect())+'</span> 热能'}],
+       ["display-text", function(){return '你拥有 <span class="singularity">'+format(player.si.points, 0)+'</span> 奇点'+(player.si.points.gte(1) ? ', 你的奇点使你每真实秒获得 <span class="ThermalEnergy" style="font-size: 24px">'+format(getSingularityEffect())+'</span> 热能' : '')}],
        'blank',
        "blank",
        ["microtabs","tab"]

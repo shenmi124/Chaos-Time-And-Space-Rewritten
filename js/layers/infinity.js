@@ -18,7 +18,7 @@ addLayer("inf", {
         if(player.inf.unlocked){
             return '无限'
         }
-        return '无限 <span style="font-size: 11px">解锁于'+format(player.points)+' / 1.797e308</span>'
+        return '无限 <span style="font-size: 11px">解锁于1.797e308时空悖论</span>'
     },
     type: "none",
     row: 4, // Row the layer is in on the tree (0 is the first row)

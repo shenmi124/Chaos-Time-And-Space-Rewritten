@@ -1296,7 +1296,7 @@ addLayer("s", {
                 getDimShiftClass('reset')
             },
             canClick(){return true},
-            unlocked(){return !player.s.inVolumeChallenge},
+            unlocked(){return !player.s.inVolumeChallenge && !player.si.contracting},
             style(){return {'background-color': '#000'}},
         },
         12: {
@@ -1316,7 +1316,7 @@ addLayer("s", {
                 return '进行空间扭曲并获得'+format(getWarpGain())+'扭曲时空'
             },
             canClick(){return player.s.points.gte(3)},
-            unlocked(){return !player.s.inVolumeChallenge},
+            unlocked(){return !player.s.inVolumeChallenge && !player.si.contracting},
             style(){
                 if(this.canClick()){
                     return {'background-color': '#000'}
@@ -1334,7 +1334,7 @@ addLayer("s", {
                 doReset('s')
                 doReset('s', true)
             },
-            unlocked(){return !player.s.inVolumeChallenge},
+            unlocked(){return !player.s.inVolumeChallenge && !player.si.contracting},
             canClick(){return true},
         }
     },
