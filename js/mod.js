@@ -38,8 +38,8 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.12",
-	name: "Singularity!",
+	num: "0.2",
+	name: "Infinity!",
 }
 
 function changelog(){
@@ -73,7 +73,7 @@ function canGenPoints(){
 
 function getOriginalPointGain(){
 	let base = n(0)
-	base = base.add(Dim1Gain())
+	base = base.add(Dim1Production())
 
 	let mul = n(1)
 	if(player.s.red){
@@ -134,7 +134,6 @@ function displayThingsRes(){
 	let space = ''
 	let warp = ''
 	let prism = ''
-	let volume = ''
 	if(tmp.s.layerShown){
 		space = `<br>
 		${(i18n("空间", "空间"))}: `+format(player.s.points)+amountDisplay(player.s.points, getSpaceAmount())+` | `
@@ -144,10 +143,6 @@ function displayThingsRes(){
 		if(tmp.s.microtabs.tab.prism.unlocked){
 			prism = `<br>
 			${(i18n("光强", "光强"))}: `+format(getIllumination())+amountDisplay(getIlluminationBase(), getIllumination())+` | `
-		}
-		if(tmp.s.microtabs.tab.volume.unlocked){
-			volume = `<br>
-			${(i18n("体积", "体积"))}: `+format(getVolume())+amountDisplay(getVolume(), getVolumeAmount())+` | `
 		}
 	}
 
@@ -161,12 +156,12 @@ function displayThingsRes(){
 		}
 	}
 
-	return spacetime+space+warp+prism+volume+singularity+thermalEnergy
+	return spacetime+space+warp+prism+singularity+thermalEnergy
 }
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.si.points.gte(6)
+	return player.points.gte('1.797e308')
 }
 
 // 

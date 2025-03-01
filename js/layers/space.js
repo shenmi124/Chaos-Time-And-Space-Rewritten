@@ -381,7 +381,7 @@ addLayer("s", {
         },
         22: {
             title: "时空协同[s22]",
-            description: "一维时空基础生产提升其乘数",
+            description: "一维时空基础生产提升自身倍率",
             cost(){
                 if(player.s.inVolumeChallenge){
                     return getVolumeChallengeUpgradesCost(this.id)
@@ -391,7 +391,7 @@ addLayer("s", {
             pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 11) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
-            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'lg(x)<br>x = '+format(Dim1BaseGain())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: lg(一维时空的基础生产)×'+spaceUpgradesText(n(this.green()), true)+'提升其倍率*</grey><br>基础效果: +'+format(this.effect())+'×'},
+            tooltip(){return 'f(x) = '+spaceUpgradesText(n(this.green()), true)+'lg(x)<br>x = '+format(Dim1BaseProduction())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: lg(一维时空的基础生产)×'+spaceUpgradesText(n(this.green()), true)+'提升自身倍率*</grey><br>基础效果: +'+format(this.effect())+'×'},
             green(){
                 let green = n(0.5)
                 if(hasUpgrade('s', 'd'+this.id)){
@@ -399,7 +399,7 @@ addLayer("s", {
                 }
                 return green
             },
-            effect(){return n(Dim1BaseGain()).max(1).log(10).mul(this.green())}
+            effect(){return n(Dim1BaseProduction()).max(1).log(10).mul(this.green())}
         },
 
         31: {
@@ -688,6 +688,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -710,6 +711,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -733,6 +735,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -755,6 +758,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -777,6 +781,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -799,6 +804,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -822,6 +828,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -844,6 +851,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -866,6 +874,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -888,6 +897,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -910,6 +920,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -932,6 +943,7 @@ addLayer("s", {
             title(){return tmp.s.upgrades[this.id.slice(1)].title+'<span class="dimShift">维度提升</span>'},
             description(){return tmp.s.upgrades[this.id.slice(1)].description},
             cost(){return n(1)},
+            pay(){},
             currencyDisplayName(){return '维度提升'},
             hardAfford(){return n(getUnusedDimShift()).gte(this.cost())},
             unlocked(){return (hasUpgrade('s', this.id.slice(1)) && n(getUnusedDimShift()).gte(1)) || hasUpgrade('s', this.id)},
@@ -955,7 +967,7 @@ addLayer("s", {
             onClick(){
                 player.s.red = true
             },
-            canClick(){return getPrismAmount() && !player.s.red},
+            canClick(){return getPrismAmount() && !player.s.red && hasUpgrade('s', 31)},
             branches(){return ['green']},
             tooltip(){
                 let effect = '<redlit><big>红光源</big></redlit><br>红光源可以提升时空悖论的产量<br>'
@@ -1014,7 +1026,7 @@ addLayer("s", {
             onClick(){
                 player.s.green = true
             },
-            canClick(){return getPrismAmount() && !player.s.green},
+            canClick(){return getPrismAmount() && !player.s.green && hasUpgrade('s', 31)},
             branches(){return ['blue']},
             tooltip(){
                 let effect = '<greenlit><big>绿光源</big></greenlit><br>绿光源可以给于额外空间<br>'
@@ -1073,7 +1085,7 @@ addLayer("s", {
             onClick(){
                 player.s.blue = true
             },
-            canClick(){return getPrismAmount() && !player.s.blue},
+            canClick(){return getPrismAmount() && !player.s.blue && hasUpgrade('s', 31)},
             branches(){return ['red']},
             tooltip(){
                 let effect = '<bluelit><big>蓝光源</big></bluelit><br>蓝光源可以提升你的时间速率<br>'

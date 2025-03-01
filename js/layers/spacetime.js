@@ -40,7 +40,7 @@ function Dim1Base(){
     return base
 }
 
-function Dim1BaseGain(){
+function Dim1BaseProduction(){
     let base = Dim1Base()
     let mul = n(1)
 	if(hasUpgrade('s', 13)){mul = mul.mul(upgradeEffect('s', 13))}
@@ -51,6 +51,7 @@ function Dim1BaseGain(){
 function Dim1Mul(){
     let base = n(1)
     if(hasUpgrade('s', 22)){base = base.add(upgradeEffect('s', 22))}
+    base = base.mul(player.st.SpaceTime2Dim.mul(Dim2Mul())).max(1)
     return base
 }
 
@@ -64,13 +65,73 @@ function Dim1Cost(){
 	return baseCost.pow(basePow)
 }
 
-function Dim1Gain(){
-    return n(Dim1BaseGain()).mul(Dim1Mul())
+function Dim1Production(){
+    return n(Dim1BaseProduction()).mul(Dim1Mul())
 }
 
 function Dim1Gen(){
     let gain = n(0)
-    if(hasUpgrade('s', 32)){
+    if(hasUpgrade('s', 32) && !(player.st.SpaceTime2DimGen && Dim2Unlocked())){
+        gain = gain.add(upgradeEffect('s', 32))
+    }
+    gain = gain.add(player.st.SpaceTime2Dim)
+    gain = gain.mul(getTimeSpeed())
+    return gain
+}
+
+function Dim2Unlocked(){
+    return hasMilestone('si', 4)
+}
+
+function Dim2Extra(){
+    let base = n(0)
+    return base
+}
+
+function Dim2MultExtra(){
+    let base = n(0)
+    return base
+}
+
+function Dim2CanMult(){
+    let canMult = false
+    if(false){
+        canMult = true
+    }
+    if(player.st.SpaceTime2Dim.add(Dim2Extra()).gte(player.st.SpaceTime2Dim.mul(Dim2MultExtra()))){
+        canMult = false
+    }
+    return canMult
+}
+
+function Dim2Base(){
+    let base = player.st.SpaceTime2Dim
+    if(Dim2CanMult()){
+        base = base.mul(Dim2MultExtra())
+    }else{
+        base = base.add(Dim2Extra())
+    }
+    return base
+}
+
+function Dim2BaseProduction(){
+    let base = Dim2Base()
+    let mul = n(1)
+    return n(base).mul(mul)
+}
+
+function Dim2Mul(){
+    let base = n(1)
+    return base
+}
+
+function Dim2Production(){
+    return n(Dim2BaseProduction()).mul(Dim2Mul())
+}
+
+function Dim2Gen(){
+    let gain = n(0)
+    if(hasUpgrade('s', 32) && (player.st.SpaceTime2DimGen && Dim2Unlocked())){
         gain = gain.add(upgradeEffect('s', 32))
     }
     gain = gain.mul(getTimeSpeed())
@@ -86,6 +147,9 @@ addLayer("st", {
         unlocked: true,
 		points: new Decimal(0),
         SpaceTime1Dim: n(0),
+        SpaceTime2Dim: n(0),
+
+        SpaceTime2DimGen: true,
     }},
     color: "#97f1ee",
     type: "none",
@@ -93,13 +157,14 @@ addLayer("st", {
     nodeStyle: {"background": "linear-gradient(90deg, #97f1ee 0%, #fff 50%, #97f1ee 100%)"},
     update(diff){
         player.st.SpaceTime1Dim = player.st.SpaceTime1Dim.add(n(Dim1Gen()).mul(diff))
+        player.st.SpaceTime2Dim = player.st.SpaceTime2Dim.add(n(Dim2Gen()).mul(diff))
 
         if(window.innerWidth>=1200){
             document.body.style.setProperty('--dimTableWidth', '150px')
             document.body.style.setProperty('--dimTableFont', '20px')
         }else{
-            document.body.style.setProperty('--dimTableWidth', '75px')
-            document.body.style.setProperty('--dimTableFont', '10px')
+            document.body.style.setProperty('--dimTableWidth', '100px')
+            document.body.style.setProperty('--dimTableFont', '15px')
         }
     },
     buyables: {
@@ -111,8 +176,30 @@ addLayer("st", {
                 player.points = player.points.sub(this.cost())
                 player.st.SpaceTime1Dim = player.st.SpaceTime1Dim.add(1)
             },
+            tooltip(){
+                return '消耗: '+format(Dim1Cost())+'时空悖论<br>*点击或长按购买一维时空*'
+            },
             style(){
                 if(this.canAfford()){
+                    return {"background-color":"#fff"}
+                }
+                return {}
+            },
+        },
+    },
+    clickables: {
+        2: {
+            display(){return player.st.SpaceTime2DimGen ? 'ON' : 'OFF'},
+            cost(){return Dim1Cost()},
+            canClick(){return true},
+            onClick(){
+                player.st.SpaceTime2DimGen = !player.st.SpaceTime2DimGen
+            },
+            tooltip(){
+                return '点击切换状态<br>当前状态: '+(player.st.SpaceTime2DimGen ? '启用' : '未启用')+'<br><br>启用时,[s32]将生产二维时空'
+            },
+            style(){
+                if(this.canClick()){
                     return {"background-color":"#fff"}
                 }
                 return {}
@@ -131,7 +218,6 @@ addLayer("st", {
                         ["display-text", function(){return '<div class="dimTable">额外</div>'}],
                         ["display-text", function(){return '<div class="dimTable">生产</div>'}],
                         ["display-text", function(){return '<div class="dimTable">倍率</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">消耗</div>'}],
                         ["display-text", function(){return '<div style="width: 34px" class="dimTable"> </div>'}],
                     ]],
                     "blank",
@@ -139,14 +225,27 @@ addLayer("st", {
                         ["display-text", function(){return '<div class="dimTable">一维时空</div>'}],
                         ["display-text", function(){return '<div class="dimTable">'+format(player.st.SpaceTime1Dim)+'</div>'}],
                         ["display-text", function(){return '<div class="dimTable">'+(Dim1CanMult() ? '×'+format(Dim1MultExtra()) : format(Dim1Extra()))+'</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+format(Dim1BaseGain())+'</div>'}],
+                        ["display-text", function(){return '<div class="dimTable">'+format(Dim1BaseProduction())+'</div>'}],
                         ["display-text", function(){return '<div class="dimTable">'+format(Dim1Mul())+'</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+format(Dim1Cost())+'</div>'}],
                         ["buyable", 1]
                     ]],
                     "blank",
+                    ['row', [
+                        ["display-text", function(){return '<div class="dimTable">二维时空</div>'}],
+                        ["display-text", function(){return '<div class="dimTable">'+format(player.st.SpaceTime2Dim)+'</div>'}],
+                        ["display-text", function(){return '<div class="dimTable">'+(Dim2CanMult() ? '×'+format(Dim2MultExtra()) : format(Dim2Extra()))+'</div>'}],
+                        ["display-text", function(){return '<div class="dimTable">'+format(Dim2BaseProduction())+'</div>'}],
+                        ["display-text", function(){return '<div class="dimTable">'+format(Dim2Mul())+'</div>'}],
+                        ["clickable", 2]
+                    ]],
                     "blank",
-                    ["display-text", function(){return '一维时空'+(n(Dim1Gen().neq()) ? '(+'+format(Dim1Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)时空悖论<br>(+'+format(Dim1Gain())+'/rs)'}],
+                    "blank",
+                    ["display-text", function(){return '一维时空'+(n(Dim1Gen().neq()) ? '(+'+format(Dim1Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)时空悖论'}],
+                    ["display-text", function(){return '(+'+format(Dim1Production())+'/rs)'}],
+                    "blank",
+                    ["display-text", function(){return '二维时空'+(n(Dim2Gen().neq()) ? '(+'+format(Dim2Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)一维时空'}],
+                    ["display-text", function(){return '(+'+format(Dim2Production())+'/rs)'}],
+                    ["display-text", function(){return '二维时空提升(1×自身倍率)的一维时空倍率'}],
                 ],
             }
         },
@@ -163,6 +262,13 @@ addLayer("st", {
             "border-radius": "0%",
             "z-index": "1",
             "font-size": '16px',
+        },
+        clickable: {
+            width: "30px",
+            height: "30px",
+            "border-radius": "0%",
+            "z-index": "1",
+            "font-size": '14px',
         },
     },
     layerShown(){return hasUpgrade('s', 11)},

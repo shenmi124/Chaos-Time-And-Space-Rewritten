@@ -7,12 +7,11 @@ addLayer("inf", {
         unlocked: false,
 		points: new Decimal(0),
     }},
-    color: "#fff",
+    color: "#ff9800",
     nodeStyle(){
         if(!player.inf.unlocked){
             return {}
         }
-        return {"background": "linear-gradient(90deg, #fff 0%, #fff 25%, #fff 75%, #fff 100%)"}
     },
     symbol(){
         if(player.inf.unlocked){
