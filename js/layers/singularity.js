@@ -11,7 +11,7 @@ function getThermalEnergyOriginalGen(){
     base = base.mul(buyableEffect('si', 11))
     base = base.mul(buyableEffect('si', 22))
     if(n(getBuyableAmount('si', 31)).gte(4)){
-        base = base.mul(n(10).pow(player.si.points).max(1))
+        base = base.mul(n(20).pow(player.si.points).max(1))
     }
     if(n(getBuyableAmount('si', 31)).gte(5)){
         base = base.mul(base.max(1).ln().max(1))
@@ -538,7 +538,7 @@ addLayer("si", {
                 1(){return '前两行的效果对数提升自身'},
                 2(){return '[si13]的效果同样对[si14],[si21],[si22],[si24]生效'},
                 3(){return '[si11],[si12],[si14],[si21],[si22],[si24]的数量分别对数提升自身'},
-                4(){return '每个奇点额外使热能产量×10'},
+                4(){return '每个奇点额外使热能产量×20'},
                 5(){return '热能的自然对数提升自身'},
                 6(){return '购买前两行不消耗任何热能且自动购买'},
                 7(){return '每个[si31]使热能生产翻倍'},
@@ -649,7 +649,7 @@ addLayer("si", {
             done(){return n(player.si.points).gte(this.req())},
         },
         8: {
-			requirementDescription(){return "第七奇点里程碑"},
+			requirementDescription(){return "第八奇点里程碑"},
             effectDescription(){return '奖励: [si31]不重置任何<br>需求: 23 奇点'},
             req(){return n(23)},
             done(){return n(player.si.points).gte(this.req())},

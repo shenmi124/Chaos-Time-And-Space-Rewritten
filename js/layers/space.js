@@ -1186,7 +1186,7 @@ addLayer("s", {
                     `
                 }
             },
-            canClick(){return n(volumeExpectGain()).gt(getVolume()) && (player.s.inVolumeChallenge || hasUpgrade('s', 41))},
+            canClick(){return n(volumeExpectGain()).gt(getVolume()) && (player.s.inVolumeChallenge || hasUpgrade('s', 41)) && !player.si.contracting},
             onClick(){
                 if(player.s.inVolumeChallenge && player.s.points.gte(getChallengeDone())){
                     player.s.x = player.s.xSet

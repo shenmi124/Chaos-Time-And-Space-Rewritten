@@ -192,6 +192,7 @@ addLayer("st", {
             display(){return player.st.SpaceTime2DimGen ? 'ON' : 'OFF'},
             cost(){return Dim1Cost()},
             canClick(){return true},
+            unlocked(){return Dim2Unlocked()},
             onClick(){
                 player.st.SpaceTime2DimGen = !player.st.SpaceTime2DimGen
             },
@@ -231,11 +232,36 @@ addLayer("st", {
                     ]],
                     "blank",
                     ['row', [
-                        ["display-text", function(){return '<div class="dimTable">二维时空</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+format(player.st.SpaceTime2Dim)+'</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+(Dim2CanMult() ? '×'+format(Dim2MultExtra()) : format(Dim2Extra()))+'</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+format(Dim2BaseProduction())+'</div>'}],
-                        ["display-text", function(){return '<div class="dimTable">'+format(Dim2Mul())+'</div>'}],
+                        ["display-text", function(){
+                            if(!Dim2Unlocked()){
+                                return ''
+                            }
+                            return '<div class="dimTable">二维时空</div>'
+                        }],
+                        ["display-text", function(){
+                            if(!Dim2Unlocked()){
+                                return ''
+                            }
+                            return '<div class="dimTable">'+format(player.st.SpaceTime2Dim)+'</div>'
+                        }],
+                        ["display-text", function(){
+                            if(!Dim2Unlocked()){
+                                return ''
+                            }
+                            return '<div class="dimTable">'+(Dim2CanMult() ? '×'+format(Dim2MultExtra()) : format(Dim2Extra()))+'</div>'
+                        }],
+                        ["display-text", function(){
+                            if(!Dim2Unlocked()){
+                                return ''
+                            }
+                            return '<div class="dimTable">'+format(Dim2BaseProduction())+'</div>'
+                        }],
+                        ["display-text", function(){
+                            if(!Dim2Unlocked()){
+                                return ''
+                            }
+                            return '<div class="dimTable">'+format(Dim2Mul())+'</div>'
+                        }],
                         ["clickable", 2]
                     ]],
                     "blank",
@@ -243,9 +269,24 @@ addLayer("st", {
                     ["display-text", function(){return '一维时空'+(n(Dim1Gen().neq()) ? '(+'+format(Dim1Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)时空悖论'}],
                     ["display-text", function(){return '(+'+format(Dim1Production())+'/rs)'}],
                     "blank",
-                    ["display-text", function(){return '二维时空'+(n(Dim2Gen().neq()) ? '(+'+format(Dim2Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)一维时空'}],
-                    ["display-text", function(){return '(+'+format(Dim2Production())+'/rs)'}],
-                    ["display-text", function(){return '二维时空提升(1×自身倍率)的一维时空倍率'}],
+                    ["display-text", function(){
+                        if(!Dim2Unlocked()){
+                            return ''
+                        }
+                        return '二维时空'+(n(Dim2Gen().neq()) ? '(+'+format(Dim2Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)一维时空'
+                    }],
+                    ["display-text", function(){
+                        if(!Dim2Unlocked()){
+                            return ''
+                        }
+                        return '(+'+format(Dim2Production())+'/rs)'
+                    }],
+                    ["display-text", function(){
+                        if(!Dim2Unlocked()){
+                            return ''
+                        }
+                        return '二维时空提升(1×自身倍率)的一维时空倍率'
+                    }],
                 ],
             }
         },
