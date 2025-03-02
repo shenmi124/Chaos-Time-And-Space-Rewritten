@@ -1,5 +1,5 @@
 addLayer("sidelayer", {
-    name: "sidelayer",
+    name: "Sidelayer",
     position: -999,
     row: 0,
     symbol() {return '其他页面'}, // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -56,7 +56,7 @@ addLayer("Information", {
 })
 
 addLayer("help", {
-    name: "help",
+    name: "Help",
     symbol: "帮助",
     symbolI18N: "help",
     position: -2,

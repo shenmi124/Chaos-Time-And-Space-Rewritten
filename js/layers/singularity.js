@@ -748,6 +748,8 @@ addLayer("si", {
                         ["buyable", 33],
                         ["buyable", 34],
                     ]],
+                    'blank',
+                    'blank',
                 ]
             },
             "infinity": {
