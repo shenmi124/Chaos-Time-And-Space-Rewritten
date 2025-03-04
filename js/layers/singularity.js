@@ -156,7 +156,7 @@ addLayer("si", {
             if(player.s.points.eq(0)){
                 let upg = player.s.upgrades.concat()
                 let normalUpg = player.s.normalUpgrades.concat()
-                let boughtUpgrades = player.s.upgradesBought.concat()
+                let dimboostUpg = player.s.dimboostUpgrades.concat()
                 let red = player.s.red
                 let green = player.s.green
                 let blue = player.s.blue
@@ -170,7 +170,7 @@ addLayer("si", {
                 thermalEnergyReset()
                 doReset('si', true)
                 player.s.normalUpgrades = []
-                player.s.upgradesBought = []     
+                player.s.dimboostUpgrades = []     
                 if(hasMilestone('si', 1) || layers.si.milestones[1].done()){
                     player.s.milestones.push('4')
                     player.s.milestones.push('8')
@@ -190,7 +190,7 @@ addLayer("si", {
                 if(hasMilestone('si', 5) || layers.si.milestones[5].done()){
                     player.s.upgrades = upg.concat()
                     player.s.normalUpgrades = normalUpg.concat()
-                    player.s.upgradesBought = boughtUpgrades.concat()
+                    player.s.dimboostUpgrades = dimboostUpg.concat()
 
                     player.s.red = red
                     player.s.green = green
