@@ -51,7 +51,7 @@ function Dim1BaseProduction(){
 function Dim1Mul(){
     let base = n(1)
     if(hasUpgrade('s', 22)){base = base.add(upgradeEffect('s', 22))}
-    base = base.mul(player.st.SpaceTime2Dim.mul(Dim2Mul())).max(1)
+    base = base.mul(player.st.SpaceTime2Dim.mul(Dim2Mul()).max(1))
     return base
 }
 
