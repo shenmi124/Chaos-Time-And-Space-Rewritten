@@ -81,7 +81,9 @@ addLayer("si", {
         tempSpace: n(0),
     }},
     color: "#fff",
-    nodeStyle: {'border-color': 'rgb(201 201 201)'},
+    //nodeStyle: {'border-color': 'rgb(201 201 201)'},
+    nodeStyle: {"background": "radial-gradient(#fff, #ccc)"},
+    activeStyle: {'border-color': '#aaa'},
     type: "custom",
     getResetGain(){
         return n(1)

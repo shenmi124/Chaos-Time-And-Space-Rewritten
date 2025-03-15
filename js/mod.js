@@ -69,6 +69,7 @@ function getStartPoints(){
 // Determines if it should show points/sec
 function canGenPoints(){
 	return true
+	return n(getPointGen()).lt(resourcesMax())
 }
 
 function getOriginalPointGain(){
@@ -99,7 +100,11 @@ function getPointGen(){
 	if(player.s.contracting){
 		return n(0)
 	}
-	return n(getOriginalPointGain()).mul(getTimeSpeed())
+	let gen = n(getOriginalPointGain()).mul(getTimeSpeed())
+	if(player.points.gte(getPointMax())){
+		player.points = n(getPointMax())
+	}
+	return gen
 }
 
 function getTimeSpeed(){
@@ -109,6 +114,10 @@ function getTimeSpeed(){
 		time = time.mul(tmp.s.getBlueEffect)
 	}
 	return time
+}
+
+function getPointMax(){
+	return n('1.797e308')
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -164,7 +173,13 @@ function isEndgame() {
 	return player.points.gte('1.797e308')
 }
 
-// 
+function infinityDisplay(res){
+	if(n(res).gte(getPointMax())){
+		return '<b style="font-size: 36px">∞</b>'
+	}
+	return format(res)
+}
+
 function getPointsDisplay(){
 	let a = ''
 	if(player.devSpeed && player.devSpeed!=1){
@@ -175,7 +190,7 @@ function getPointsDisplay(){
 	}
 	a += '<br>'
 	if(!(options.ch==undefined && modInfo.internationalizationMod==true)){
-		a += `<span style="font-size: 22px" class="overlayThing">${(i18n("你有", "You have"))} <span style="font-size: 30px" class="overlayThing" id="points">${format(player.points)} ${i18n(modInfo.pointsName, modInfo.pointsNameI18N)}</span></span>`
+		a += `<span style="font-size: 22px" class="overlayThing">${(i18n("你有", "You have"))} <span style="font-size: 30px" class="overlayThing" id="points">${infinityDisplay(player.points)} ${i18n(modInfo.pointsName, modInfo.pointsNameI18N)}</span></span>`
 
 		if(canGenPoints()){
 			a += `<br><span style="font-size: 20px" class="overlayThing">(+`+(tmp.other.oompsMag != 0 ? format(tmp.other.oomps) + " OoM" + (tmp.other.oompsMag < 0 ? "^OoM" : tmp.other.oompsMag > 1 ? "^" + tmp.other.oompsMag : "") + "s" : formatSmall(getPointGen()))+`/sec)</span>`
