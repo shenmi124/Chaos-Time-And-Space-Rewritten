@@ -3,8 +3,8 @@ let modInfo = {
 	nameI18N: "CTS: Rewritten",// When you enabled the internationalizationMod, this is the name in the second language
 	id: "ChaosTimeAndSpaceRewritten",
 	author: "辉影神秘(Shinwmyste)",
-	pointsName: "时空悖论",
-	pointsNameI18N: "Space Time Paradox",// When you enabled the internationalizationMod, this is the name in the second language
+	pointsName: "点",
+	pointsNameI18N: "Points",// When you enabled the internationalizationMod, this is the name in the second language
 	modFiles: ["layers.js", "tree.js", "layers/spacetime.js", "layers/space.js", "layers/singularity.js", "layers/infinity.js"],
 
 	internationalizationMod: false,
@@ -38,7 +38,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
+	num: "0.21",
 	name: "Infinity!",
 }
 
@@ -69,7 +69,6 @@ function getStartPoints(){
 // Determines if it should show points/sec
 function canGenPoints(){
 	return true
-	return n(getPointGen()).lt(resourcesMax())
 }
 
 function getOriginalPointGain(){
@@ -101,9 +100,9 @@ function getPointGen(){
 		return n(0)
 	}
 	let gen = n(getOriginalPointGain()).mul(getTimeSpeed())
-	if(player.points.gte(getPointMax())){
-		player.points = n(getPointMax())
-	}
+
+	checkResourceMax(null, 'points', gen)
+
 	return gen
 }
 
@@ -116,8 +115,20 @@ function getTimeSpeed(){
 	return time
 }
 
-function getPointMax(){
+function getResourceMax(){
 	return n('1.797e308')
+}
+
+function checkResourceMax(layer, res, gen, max=getResourceMax()){
+	if(layer==null){
+		if(player[res].add(n(gen).mul(CommonDiff)).gte(max)){
+			player[res] = n(max)
+		}
+	}else{
+		if(player[layer][res].add(n(gen).mul(CommonDiff)).gte(max)){
+			player[layer][res] = n(max)
+		}
+	}
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -136,7 +147,7 @@ var displayThings = [
 function displayThingsRes(){
 	let spacetime = ''
 	spacetime = `
-	${(i18n("时空悖论", "时空悖论"))}: `+format(player.points)+` (+`+format(getPointGen())+`/s) | 
+	${(i18n("点", "点"))}: `+format(player.points)+` (+`+format(getPointGen())+`/s) | 
 	<br>
 	${(i18n("时间速率", "时间速率"))}: `+format(getTimeSpeed())+`× | `
 
@@ -173,11 +184,11 @@ function isEndgame() {
 	return player.points.gte('1.797e308')
 }
 
-function infinityDisplay(res){
-	if(n(res).gte(getPointMax())){
+function infinityFormat(res, small=''){
+	if(n(res).gte(getResourceMax())){
 		return '<b style="font-size: 36px">∞</b>'
 	}
-	return format(res)
+	return format(res, small)
 }
 
 function getPointsDisplay(){
@@ -190,7 +201,7 @@ function getPointsDisplay(){
 	}
 	a += '<br>'
 	if(!(options.ch==undefined && modInfo.internationalizationMod==true)){
-		a += `<span style="font-size: 22px" class="overlayThing">${(i18n("你有", "You have"))} <span style="font-size: 30px" class="overlayThing" id="points">${infinityDisplay(player.points)} ${i18n(modInfo.pointsName, modInfo.pointsNameI18N)}</span></span>`
+		a += `<span style="font-size: 22px" class="overlayThing">${(i18n("你有", "You have"))} <span style="font-size: 30px" class="overlayThing" id="points">${infinityFormat(player.points)} </span>${i18n(modInfo.pointsName, modInfo.pointsNameI18N)}</span>`
 
 		if(canGenPoints()){
 			a += `<br><span style="font-size: 20px" class="overlayThing">(+`+(tmp.other.oompsMag != 0 ? format(tmp.other.oomps) + " OoM" + (tmp.other.oompsMag < 0 ? "^OoM" : tmp.other.oompsMag > 1 ? "^" + tmp.other.oompsMag : "") + "s" : formatSmall(getPointGen()))+`/sec)</span>`

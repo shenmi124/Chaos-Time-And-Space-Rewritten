@@ -244,8 +244,8 @@ addLayer("s", {
     hoverStyle: {'background-color': '#000', 'color': '#fff', 'border-color': '#DFDFDF'},
     resource: "空间",
     resourceI18N: "Space",
-    baseResource: "时空悖论",
-    baseResourceI18N: "Space Time Paradox",
+    baseResource: "点",
+    baseResourceI18N: "Points",
     baseAmount() {return player.points.max(1)},
     type: "custom",
     CostBase(){
@@ -272,7 +272,7 @@ addLayer("s", {
         return n(this.CostBase()).pow(this.CostAmount(n(1).add(this.getResetGain()))).div(this.CostMult())
     },
     prestigeButtonText(){
-        return `获得 <big>`+format(this.getResetGain(),0)+` 空间</big><br>并进行一次空间重置<br>下一个空间在:<br>`+format(this.getNextAt())+`时空悖论`
+        return `获得 <big>`+format(this.getResetGain(),0)+` 空间</big><br>并进行一次空间重置<br>下一个空间在:<br>`+format(this.getNextAt())+`点`
     },
     prestigeNotify(){
         return n(this.getResetGain()).gte(1)
@@ -624,7 +624,7 @@ addLayer("s", {
         },
         43: {
             title: "空间改善[s43]",
-            description: "时空悖论的原始产量降低空间价格底数",
+            description: "点的原始产量降低空间价格底数",
             cost(){
                 if(player.s.inVolumeChallenge){
                     return getVolumeChallengeUpgradesCost(this.id)
@@ -634,7 +634,7 @@ addLayer("s", {
             pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
-            tooltip(){return 'f(x) = (x-'+spaceUpgradesText(n(this.red()), false)+')/(x-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')<br>x = '+format(n(getOriginalPointGain()).max(1).log(10).max(1))+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间价格底数降低<br>(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+')/(时空悖论的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')的八倍*</grey><br><darkgrey>*八倍的效果公式在空间价格公式之中*</darkgrey><br>基础效果: -'+format(this.effect())},
+            tooltip(){return 'f(x) = (x-'+spaceUpgradesText(n(this.red()), false)+')/(x-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')<br>x = '+format(n(getOriginalPointGain()).max(1).log(10).max(1))+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: 空间价格底数降低<br>(点的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+')/(点的原始产量的数量级-'+spaceUpgradesText(n(this.red()), false)+'+'+spaceUpgradesText(n(this.red2()), false)+')的八倍*</grey><br><darkgrey>*八倍的效果公式在空间价格公式之中*</darkgrey><br>基础效果: -'+format(this.effect())},
             red(){
                 let red = n(15)
                 if(hasUpgrade('s', 'd'+this.id)){
@@ -662,7 +662,7 @@ addLayer("s", {
         },
         44: {
             title: "扭曲改善[s44]",
-            description: "扭曲空间效果提升时空悖论获取",
+            description: "扭曲空间效果提升点获取",
             cost(){
                 if(player.s.inVolumeChallenge){
                     return getVolumeChallengeUpgradesCost(this.id)
@@ -672,7 +672,7 @@ addLayer("s", {
             pay(){player.s.normalUpgrades.push(Number(this.id))},
             hardAfford(){return n(getUnusedSpace()).gte(this.cost())},
             unlocked(){return hasUpgrade('s', 31) && (!hasUpgrade('s', this.id) || n(getUnusedDimShift()).lte(0) && !hasUpgrade('s', 'd'+this.id))},
-            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (扭曲空间效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升时空悖论获取*</grey><br>基础效果: ×'+format(this.effect())},
+            tooltip(){return 'f(x) = x<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup><br>x = '+format(getWarpSpaceEffect())+', f(x) = '+format(this.effect())+'<br><grey>*基础效果: (扭曲空间效果)<sup>'+spaceUpgradesText(n(this.green()), true)+'</sup>提升点获取*</grey><br>基础效果: ×'+format(this.effect())},
             green(){
                 let green = n(1.2)
                 if(hasUpgrade('s', 'd'+this.id)){
@@ -970,7 +970,7 @@ addLayer("s", {
             canClick(){return getPrismAmount() && !player.s.red && hasUpgrade('s', 31)},
             branches(){return ['green']},
             tooltip(){
-                let effect = '<redlit><big>红光源</big></redlit><br>红光源可以提升时空悖论的产量<br>'
+                let effect = '<redlit><big>红光源</big></redlit><br>红光源可以提升点的产量<br>'
                 effect += 'f(x) = x<sup>1.75</sup><br>x = '+format(getIllumination())+', f(x) = '+format(tmp.s.getRedEffect)
                 
                 let unlock = ''
@@ -1148,7 +1148,7 @@ addLayer("s", {
                 `+(player.s.inVolumeChallenge ? (player.s.points.gte(getChallengeDone()) ? '再次点击以完成挑战' : '以下效果对你产生了影响') : '在挑战中你会获得以下效果')+`<br>
                 挑战目标: <span class="space non-color">`+format(getChallengeDone())+`</span> 空间<br>
                 效果:
-                <span class="challengeTable">时空悖论生产</span><span class="effectTable">/`+format(getChallengeAffect())+`</span>
+                <span class="challengeTable">点生产</span><span class="effectTable">/`+format(getChallengeAffect())+`</span>
                 <span class="challengeTable">空间数量</span><span class="effectTable">/`+format(getVolumeAffect()[0])+`</span>
                 <span class="challengeTable">扭曲空间数量</span><span class="effectTable">/`+format(getVolumeAffect()[1])+`</span>
                 <span class="challengeTable">光强数量</span><span class="effectTable">/`+format(getVolumeAffect()[2])+`</span><br>
@@ -1177,7 +1177,7 @@ addLayer("s", {
                     体积将减少空间,扭曲空间,光强的数量<br>
                     变量X会提升空间完成的需求量<br>
                     变量Y会提升你的体积惩罚的指数<br>
-                    变量Z会降低时空悖论的生产<br><br>
+                    变量Z会降低点的生产<br><br>
                     完成挑战后<br>
                     预设体积的数值将覆盖至空间体积<br>
                     (首次完成挑战将在体积中解锁里程碑页面)<br><br>
@@ -1362,7 +1362,7 @@ addLayer("s", {
         },
         2: {
 			requirementDescription(){return "第二体积里程碑"},
-            effectDescription(){return '奖励: 当时空悖论生产大于1时基于体积提升时空悖论产量的指数(^'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            effectDescription(){return '奖励: 当点生产大于1时基于体积提升点产量的指数(^'+format(this.effect())+')<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(3)},
             done(){return n(getVolume()).gte(this.req())},
             effect(){
@@ -1472,7 +1472,7 @@ addLayer("s", {
                 nameI18N(){return 'Warp'},
                 unlocked(){return hasUpgrade('s', 21)},
                 content:[
-                    ["display-text", function(){return '你有 <span class="space">'+format(player.s.warp)+amountDisplay(player.s.warp, getWarpAmount())+' 扭曲空间</span>'+(n(getWarpGen()).neq(0) ? '(+'+format(getWarpGen())+'/s)' : '')+', 它们使得你的时间速率×<span class="timespeed">'+format(getWarpSpaceEffect())+'</span>'+(hasUpgrade('s', 44) ? ', 时空悖论×<span class="space">'+format(upgradeEffect('s', 44))+'</span>' : '')+(hasUpgrade('s', 14) ? ', 一维时空产量×<span class="space">'+format(upgradeEffect('s', 14))+'</span>' : '')}],
+                    ["display-text", function(){return '你有 <span class="space">'+format(player.s.warp)+amountDisplay(player.s.warp, getWarpAmount())+' 扭曲空间</span>'+(n(getWarpGen()).neq(0) ? '(+'+format(getWarpGen())+'/s)' : '')+', 它们使得你的时间速率×<span class="timespeed">'+format(getWarpSpaceEffect())+'</span>'+(hasUpgrade('s', 44) ? ', 点×<span class="space">'+format(upgradeEffect('s', 44))+'</span>' : '')+(hasUpgrade('s', 14) ? ', 一维时空产量×<span class="space">'+format(upgradeEffect('s', 14))+'</span>' : '')}],
                     ["display-text", function(){return `<span style="font-family: Courier New">
                         f(x) = log<sub>2</sub>(x)<sup>1.5</sup><br>
                         x = `+format(getWarpAmount())+`, f(x) = `+format(getWarpSpaceEffect())+`
@@ -1488,7 +1488,7 @@ addLayer("s", {
                 nameI18N(){return 'Prism'},
                 unlocked(){return hasUpgrade('s', 31)},
                 content:[
-                    ["display-text", function(){return '你的时空悖论的原始产量为 <span class="space">'+format(getOriginalPointGain())+'/rs</span>, 它们为你提供了 <span class="space">'+format(getIlluminationBase())+amountDisplay(getIlluminationBase(), getIllumination())+' 光强</span>'}],
+                    ["display-text", function(){return '点的原始产量为 <span class="space">'+format(getOriginalPointGain())+'/rs</span>, 它们为你提供了 <span class="space">'+format(getIlluminationBase())+amountDisplay(getIlluminationBase(), getIllumination())+' 光强</span>'}],
                     ["display-text", function(){return `<span style="font-family: Courier New">
                         f(x) = log<sub>2</sub>(x)<br>
                         x = `+format(getOriginalPointGain())+`, f(x) = `+format(getIllumination())+`
@@ -1623,7 +1623,7 @@ addLayer("s", {
                             ['row', [
                                 ["display-text", function(){return '<div class="spaceTable"><span class="space">Z</span></div>'}],
                                 ["display-text", function(){return '<div class="spaceTable"><span class="space">('+format(player.s.zSet, 0)+')</span></div>'}],
-                                ["display-text", function(){return '<span class="space"><div class="dimTable">时空悖论生产</div></space>'}],
+                                ["display-text", function(){return '<span class="space"><div class="dimTable">点生产</div></space>'}],
                                 ["display-text", function(){return '<div class="spaceTable"><span class="space">/'+format(getChallengeAffect())+'</span></div>'}],
                             ]],
                         ]],

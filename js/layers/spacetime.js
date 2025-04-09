@@ -177,7 +177,7 @@ addLayer("st", {
                 player.st.SpaceTime1Dim = player.st.SpaceTime1Dim.add(1)
             },
             tooltip(){
-                return '消耗: '+format(Dim1Cost())+'时空悖论<br>*点击或长按购买一维时空*'
+                return '消耗: '+format(Dim1Cost())+'点<br>*点击或长按购买一维时空*'
             },
             style(){
                 if(this.canAfford()){
@@ -266,7 +266,7 @@ addLayer("st", {
                     ]],
                     "blank",
                     "blank",
-                    ["display-text", function(){return '一维时空'+(n(Dim1Gen().neq()) ? '(+'+format(Dim1Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)时空悖论'}],
+                    ["display-text", function(){return '一维时空'+(n(Dim1Gen().neq()) ? '(+'+format(Dim1Gen())+'/s)' : '')+'每秒会生产(1×自身倍率)点'}],
                     ["display-text", function(){return '(+'+format(Dim1Production())+'/rs)'}],
                     "blank",
                     ["display-text", function(){

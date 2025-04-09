@@ -679,7 +679,7 @@ addLayer("si", {
                 content:[
                     ["display-text", function(){return '你有 <span class="ThermalEnergy">'+format(player.si.thermalEnergy)+'</span> 热能'}],
                     ["display-text", function(){return '你的奇点每秒产生 <span class="ThermalEnergy" style="font-size: 24px">'+format(getThermalEnergyGen())+'</span> 的热能'}],
-                    ["display-text", function(){return '你的最大热能使你的时空悖论产量<span class="ThermalEnergy" style="font-size: 24px"><mul>×</mul>'+format(getThermalEnergyEffect())+'</span>'}],
+                    ["display-text", function(){return '你的最大热能使你的点产量<span class="ThermalEnergy" style="font-size: 24px"><mul>×</mul>'+format(getThermalEnergyEffect())+'</span>'}],
                     "blank",
                     ["microtabs", "thermalEnergy"]
                 ]

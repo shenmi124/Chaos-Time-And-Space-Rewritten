@@ -1,3 +1,63 @@
+addLayer("storylayer", {
+    name: "storylayer",
+    position: -3,
+    row: 0,
+    symbol() {return '次要页面'}, // This appears on the layer's node. Default is the id with the first letter capitalized
+    symbolI18N() {return 'Story'}, // Second name of symbol for internationalization (i18n) if internationalizationMod is enabled (in mod.js)
+    small: true,// Set to true to generate a slightly smaller layer node
+    nodeStyle: {"font-size": "15px", "height": "30px"},// Style for the layer button
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),// This currently does nothing, but it's required. (Might change later if you add mechanics to this layer.)
+    }},
+    color: "#fefefe",
+    type: "none",
+    tooltip(){return false},
+    layerShown(){return true},// If any layer in the array is unlocked, it will returns true. Otherwise it will return false.
+	tabFormat: [
+        ["display-text", function() { return getPointsDisplay() }]
+    ],
+})
+
+addLayer("storybook", {
+    name: "storybook",
+    position: -2,
+    row: 0,
+    symbol() {return '笔记'}, // This appears on the layer's node. Default is the id with the first letter capitalized
+    symbolI18N() {return 'Story'}, // Second name of symbol for internationalization (i18n) if internationalizationMod is enabled (in mod.js)
+    small: false,// Set to true to generate a slightly smaller layer node
+    nodeStyle: {"max-width": "100%"},// Style for the layer button
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),// This currently does nothing, but it's required. (Might change later if you add mechanics to this layer.)
+    }},
+    type: "none",
+    tooltip(){return false},
+    layerShown(){return true},// If any layer in the array is unlocked, it will returns true. Otherwise it will return false.
+    achievements: {
+        11: {
+            name: "空间",
+            done(){return player.s.points.gte(1)},
+            tooltip: "从空间开始...<br><br><i>给我空间时间及对数, 我可以创造一个宇宙</i>",
+            unlocked(){return true},
+        },
+        12: {
+            name: "点",
+            done(){return player.st.SpaceTime1Dim.gte(1)},
+            tooltip: "真正的开始,从这些一维的点开始直到...<i>直到...</i>",
+            unlocked(){return hasAchievement(this.layer, 11)},
+        },
+    },
+	tabFormat: [
+        ["display-text", function() { return getPointsDisplay() }],
+        ["display-text", function(){return '<h3>—————————— 第 零 章 ——————————</h3>'}],
+        'blank',
+        ['row', [
+            ['achievement', 11], ['achievement', 12]
+        ]], 
+    ],
+})
+
 addLayer("sidelayer", {
     name: "Sidelayer",
     position: -999,
@@ -59,7 +119,7 @@ addLayer("help", {
     name: "Help",
     symbol: "帮助",
     symbolI18N: "help",
-    position: -2,
+    position: -996,
     row: 0,
     startData() { return {
         unlocked: true,
@@ -181,11 +241,11 @@ addLayer("help", {
         },
 
         Resource: {
-            "Space Time Paradox": {
-                name(){return '时空悖论'},
-                nameI18N(){return 'Space Time Paradox'},
+            "Points": {
+                name(){return '点'},
+                nameI18N(){return 'Points'},
                 content:[
-                    ["display-text", function(){return '简称STP,基础资源'}],
+                    ["display-text", function(){return '点'}],
                 ],
             },
             "TimeSpeed": {
@@ -233,7 +293,7 @@ addLayer("help", {
                 nameI18N(){return 'Warp Space Time'},
                 unlocked(){return Dim1Unlocked()},
                 content:[
-                    ["display-text", function(){return '一维时空会生产时空悖论'}],
+                    ["display-text", function(){return '一维时空会生产点'}],
                     ["display-text", function(){return '<br>'}],
                     ["display-text", function(){return '通常情况下:'}],
                     ["display-text", function(){return '一维时空的总体数量为(数量+额外)'}],
@@ -273,7 +333,7 @@ addLayer("help", {
                     ["display-text", function(){return '棱柱中含有光的三种原色以及三种混合色和白色,这七种颜色分别具有不同的效果'}],
                     ["display-text", function(){return '你可以在对应的三种原色处插入棱柱以激活对应的颜色,并根据光强获得加成'}],
                     ["display-text", function(){return '如果你激活了两种或以上的颜色,根据颜色的混合关系你会获得其对应的混合色的加成'}],
-                    ["display-text", function(){return '光强由你的时空悖论原始产量提供'}],
+                    ["display-text", function(){return '光强由你的点原始产量提供'}],
                 ],
             },
             "Volume": {

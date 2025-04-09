@@ -392,6 +392,7 @@ function hardReset(resetOptions) {
 }
 
 var ticking = false
+var CommonDiff = 0
 
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
@@ -411,6 +412,7 @@ var interval = setInterval(function() {
 		if (!options.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
 	}
 	if (player.devSpeed) diff *= player.devSpeed
+	CommonDiff = diff
 	player.time = now
 	if (needCanvasUpdate){ resizeCanvas();
 		needCanvasUpdate = false;

@@ -1,0 +1,8 @@
+.storybook.achievement {
+    border-radius: 0
+}
+
+.storybook.achievement.locked {
+    border: 2px dashed;
+    background-color: #000;
+}
