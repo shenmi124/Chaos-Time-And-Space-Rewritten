@@ -31,6 +31,9 @@ addLayer("storybook", {
         unlocked: true,
         points: new Decimal(0),// This currently does nothing, but it's required. (Might change later if you add mechanics to this layer.)
     }},
+	doReset(resettingLayer){
+        return false
+	},
     type: "none",
     tooltip(){return false},
     layerShown(){return true},// If any layer in the array is unlocked, it will returns true. Otherwise it will return false.
@@ -38,7 +41,7 @@ addLayer("storybook", {
         11: {
             name: "空间",
             done(){return player.s.points.gte(1)},
-            tooltip: "从空间开始...<br><br><i>给我空间时间及对数, 我可以创造一个宇宙</i>",
+            tooltip: "如果没有空间那么一切都是没有意义的...<br><br><i>给我空间时间及对数,我可以创造一个宇宙</i>",
             unlocked(){return true},
         },
         12: {
@@ -47,13 +50,31 @@ addLayer("storybook", {
             tooltip: "真正的开始,从这些一维的点开始直到...<i>直到...</i>",
             unlocked(){return hasAchievement(this.layer, 11)},
         },
+        13: {
+            name: "扭曲",
+            done(){return player.s.warp.gt(0)},
+            tooltip: "空间并不规整<br>扭曲它能更好的塑造这个刚诞生的空间",
+            unlocked(){return hasAchievement(this.layer, 12)},
+        },
+        14: {
+            name: "线",
+            done(){return hasUpgrade('s', 31)},
+            tooltip: "光线是用来表示光的传播路径和方向的直线,所以将点构成线吧<br><br><i>一根一根弦,两点间的线</i>",
+            unlocked(){return hasAchievement(this.layer, 13)},
+        },
+        15: {
+            name: "体积",
+            done(){return n(getVolume()).gte(2)},
+            tooltip: "构筑三维空间<br><br><i>美包含在体积和秩序中</i>",
+            unlocked(){return hasAchievement(this.layer, 14)},
+        },
     },
 	tabFormat: [
         ["display-text", function() { return getPointsDisplay() }],
-        ["display-text", function(){return '<h3>—————————— 第 零 章 ——————————</h3>'}],
+        ["display-text", function(){return '<h3>———————————————— 第 零 章 ————————————————</h3>'}],
         'blank',
         ['row', [
-            ['achievement', 11], ['achievement', 12]
+            ['achievement', 11], ['achievement', 12], ['achievement', 13], ['achievement', 14], ['achievement', 15]
         ]], 
     ],
 })
