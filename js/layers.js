@@ -59,7 +59,7 @@ addLayer("storybook", {
         14: {
             name: "线",
             done(){return hasUpgrade('s', 31)},
-            tooltip: "光线是用来表示光的传播路径和方向的直线,所以将点构成线吧<br><br><i>一根一根弦,两点间的线</i>",
+            tooltip: "光线是用来表示光的传播路径和方向的直线<br><br><i>一根一根弦,两点间的线</i>",
             unlocked(){return hasAchievement(this.layer, 13)},
         },
         15: {
@@ -71,6 +71,8 @@ addLayer("storybook", {
     },
 	tabFormat: [
         ["display-text", function() { return getPointsDisplay() }],
+        ["display-text", function(){return '距离残局: '+format(player[this.layer].achievements.length, 0)+' / 21'}],
+        'blank',
         ["display-text", function(){return '<h3>———————————————— 第 零 章 ————————————————</h3>'}],
         'blank',
         ['row', [
