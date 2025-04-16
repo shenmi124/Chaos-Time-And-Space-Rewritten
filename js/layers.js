@@ -47,7 +47,7 @@ addLayer("storybook", {
         12: {
             name: "点",
             done(){return player.st.SpaceTime1Dim.gte(1)},
-            tooltip: "真正的开始,从这些一维的点开始直到...<i>直到...</i>",
+            tooltip: "真正的开始,从这些没有维度的点开始直到...<i>直到...</i>",
             unlocked(){return hasAchievement(this.layer, 11)},
         },
         13: {
