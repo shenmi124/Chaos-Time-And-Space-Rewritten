@@ -38,7 +38,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.21",
+	num: "0.22",
 	name: "Infinity!",
 }
 
@@ -184,11 +184,11 @@ function isEndgame() {
 	return player.points.gte('1.797e308')
 }
 
-function infinityFormat(res, small=''){
+function infinityFormat(res){
 	if(n(res).gte(getResourceMax())){
 		return '<b style="font-size: 36px">∞</b>'
 	}
-	return format(res, small)
+	return format(res)
 }
 
 function getPointsDisplay(){

@@ -68,6 +68,18 @@ addLayer("storybook", {
             tooltip: "构筑三维空间<br><br><i>美包含在体积和秩序中</i>",
             unlocked(){return hasAchievement(this.layer, 14)},
         },
+        21: {
+            name: "光谱",
+            done(){return n(getVolume()).gte(4)},
+            tooltip: "频率叠加",
+            unlocked(){return hasAchievement(this.layer, 15)},
+        },
+        22: {
+            name: "升维",
+            done(){return n(getVolume()).gte(12)},
+            tooltip: "站在更高维度审视空间",
+            unlocked(){return hasAchievement(this.layer, 21)},
+        },
     },
 	tabFormat: [
         ["display-text", function() { return getPointsDisplay() }],
@@ -77,7 +89,10 @@ addLayer("storybook", {
         'blank',
         ['row', [
             ['achievement', 11], ['achievement', 12], ['achievement', 13], ['achievement', 14], ['achievement', 15]
-        ]], 
+        ]],
+        ['row', [
+            ['achievement', 21], ['achievement', 22], ['achievement', 23], ['achievement', 24], ['achievement', 25]
+        ]],
     ],
 })
 
