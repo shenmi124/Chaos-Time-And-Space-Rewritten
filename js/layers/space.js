@@ -1415,7 +1415,7 @@ addLayer("s", {
         },
         8: {
 			requirementDescription(){return "第八体积里程碑"},
-            effectDescription(){return '奖励: 解锁寄点(新层级)<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
+            effectDescription(){return '奖励: 解锁奇点(新层级)<br>目标: '+format(getVolume(), 0)+' / '+format(this.req(), 0)+' 体积'},
             req(){return n(200)},
             done(){return n(getVolumeAmount()).gte(this.req())},
         },

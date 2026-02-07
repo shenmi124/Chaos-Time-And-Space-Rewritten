@@ -59,7 +59,7 @@ addLayer("storybook", {
         14: {
             name: "线",
             done(){return hasUpgrade('s', 31)},
-            tooltip: "光线是用来表示光的传播路径和方向的直线<br><br><i>一根一根弦,两点间的线</i>",
+            tooltip: "光线是用来表示光的传播路径和方向的直线",
             unlocked(){return hasAchievement(this.layer, 13)},
         },
         15: {
@@ -80,10 +80,28 @@ addLayer("storybook", {
             tooltip: "站在更高维度审视空间",
             unlocked(){return hasAchievement(this.layer, 21)},
         },
+        23: {
+            name: "压缩",
+            done(){return n(player.si.points).gte(1)},
+            tooltip: "将体积无限压缩",
+            unlocked(){return hasAchievement(this.layer, 22)},
+        },
+        24: {
+            name: "时空",
+            done(){return n(player.si.points).gte(7)},
+            tooltip: "更高维度的时空",
+            unlocked(){return hasAchievement(this.layer, 23)},
+        },
+        25: {
+            name: "无限",
+            done(){return n(player.points).gte('1.7e308')},
+            tooltip: "抵达无限",
+            unlocked(){return hasAchievement(this.layer, 24)},
+        },
     },
 	tabFormat: [
         ["display-text", function() { return getPointsDisplay() }],
-        ["display-text", function(){return '距离残局: '+format(player[this.layer].achievements.length, 0)+' / 21'}],
+        ["display-text", function(){return '距离残局: '+format(player[this.layer].achievements.length, 0)+' / 10'}],
         'blank',
         ["display-text", function(){return '<h3>———————————————— 第 零 章 ————————————————</h3>'}],
         'blank',

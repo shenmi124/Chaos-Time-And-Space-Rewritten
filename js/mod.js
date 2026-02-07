@@ -38,7 +38,7 @@ var colors = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.22",
+	num: "0.23",
 	name: "Infinity!",
 }
 
@@ -116,7 +116,7 @@ function getTimeSpeed(){
 }
 
 function getResourceMax(){
-	return n('1.797e308')
+	return n('1.79e308')
 }
 
 function checkResourceMax(layer, res, gen, max=getResourceMax()){
